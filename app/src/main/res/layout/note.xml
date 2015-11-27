@@ -24,12 +24,13 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_alignParentTop="true">
-            <Button
+            <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:text="G"
                 android:id="@+id/google"
+                android:background="@drawable/google2"
                 android:textSize="12sp"/>
             <TextView
                 android:layout_width="0dp"
@@ -37,15 +38,17 @@
                 android:text="New Text"
                 android:id="@+id/note"
                 android:layout_weight="1"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="11dp"
                 android:layout_marginStart="3dp"
-                android:textSize="20sp"/>
-            <Button
+                android:textSize="20sp"
+                android:textIsSelectable="true"/>
+            <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
+                android:layout_marginTop="10dp"
                 android:id="@+id/delete"
-                android:text="D"
+                android:scaleX="0.7"
+                android:background="@drawable/ic_delete"
                 android:textSize="12sp"/>
         </LinearLayout>
     </RelativeLayout>
