@@ -3,41 +3,34 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_marginLeft="8dp"
-              android:layout_marginRight="6dp">
-
+              android:layout_marginStart="8dp"
+              android:layout_marginEnd="6dp">
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="match_parent"
                   android:layout_height="50dp"
                   android:background="#CC9D9D9D"
                   android:layout_marginTop="6dp"
-                  android:layout_marginLeft="2dp"
+                  android:layout_marginStart="2dp"
                   android:layout_gravity="center">
     </RelativeLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="-53dp"
+        android:layout_marginTop="-52dp"
         android:layout_marginEnd="2dp"
-        android:background="#03a9f4"
-        >
-
-
+        android:background="#03a9f4">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_alignParentTop="true">
-
-
             <Button
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
                 android:text="G"
                 android:id="@+id/google"
-                android:textSize="12dp"/>
-
+                android:textSize="12sp"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -45,15 +38,15 @@
                 android:id="@+id/note"
                 android:layout_weight="1"
                 android:layout_marginTop="3dp"
-                android:layout_marginLeft="3dp"
-                android:textSize="20dp"/>
-
+                android:layout_marginStart="3dp"
+                android:textSize="20sp"/>
             <Button
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
                 android:id="@+id/delete"
                 android:text="D"
-                android:textSize="12dp"/>
+                android:textSize="12sp"/>
         </LinearLayout>
     </RelativeLayout>
 

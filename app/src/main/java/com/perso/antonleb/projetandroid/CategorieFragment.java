@@ -16,6 +16,7 @@ import java.util.List;
  * Created by antonleb on 09/11/2015.
  */
 public class CategorieFragment extends Fragment {
+
     ICategorie categorie;
     ArrayAdapter<INote> adapter = null;
 
@@ -40,11 +41,19 @@ public class CategorieFragment extends Fragment {
     public CategorieFragment(){}
 
     @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+        if (menuVisible){
+            if (getActivity() != null)
+                getActivity().setTitle(this.categorie.getName());
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.categorie, container, false);
         list = (ListView)rootView.findViewById(R.id.listNotes);
-        button = (FloatingActionButton)rootView.findViewById(R.id.addNote);
 
         ArrayList<String> notes = getArguments().getStringArrayList(ARG_NOTES);
         if (notes != null)
@@ -54,7 +63,26 @@ public class CategorieFragment extends Fragment {
         this.adapter = new NoteAdapter(this, R.layout.note, this.categorie.getItems());
         list.setAdapter(adapter);
 
+
+        View mView = getView();
+        if (mView != null) {
+            if (this.getUserVisibleHint()) {
+                getActivity().setTitle(this.categorie.getName());
+            }
+        }
+
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        View mView = getView();
+        if (mView != null) {
+            if (this.getUserVisibleHint()) {
+                getActivity().setTitle(this.categorie.getName());
+            }
+        }
     }
 
     public boolean deleteNote(int position){
