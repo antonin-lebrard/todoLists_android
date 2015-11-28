@@ -1,10 +1,16 @@
 package com.perso.antonleb.projetandroid.data;
 
+import android.os.Parcel;
+
+import com.perso.antonleb.projetandroid.data.creators.SimpleCreator;
 import com.perso.antonleb.projetandroid.exceptions.CategoryAlreadyExistException;
+import com.perso.antonleb.projetandroid.utils.ParcelableUtils;
 
 import java.lang.IndexOutOfBoundsException;
 import java.lang.Override;
 import java.lang.String;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -18,19 +24,24 @@ import java.util.HashSet;
 public class Category implements ICategory
 {
     /**
+     *  http://developer.android.com/reference/android/os/Parcelable.html
+     */
+    public final static SimpleCreator<Category> CREATOR = SimpleCreator.getCreator(Category.class);
+
+    /**
      * Nom de la catégorie.
      */
-    protected String name;
+    protected final String name;
 
     /**
      * Notes
      */
-    protected Set<String> notes;
+    protected final Set<String> notes;
 
     /**
      * Utilisateur possédant la catégorie.
      */
-    protected IUser owner;
+    protected final UserKey owner;
 
     /**
      * Créer une nouvelle catégorie avec un nom particulier.
@@ -40,26 +51,9 @@ public class Category implements ICategory
      */
     public Category(IUser owner, String name)
     {
-        this.owner = owner;
+        this.owner = owner.getKey();
         this.name = name;
         this.notes = new HashSet<>();
-    }
-
-    /**
-     * Créer une copie d'une autre catégorie.
-     *
-     * @param toCopy Catégorie à copier.
-     * @param newName Nom de la nouvelle catégorie.
-     */
-    public Category(ICategory toCopy, String newName)
-    {
-        this.owner = toCopy.getOwner();
-        this.name = newName;
-        this.notes = new HashSet<>();
-
-        for(String note : toCopy) {
-            this.notes.add(note);
-        }
     }
 
     /**
@@ -71,7 +65,7 @@ public class Category implements ICategory
      */
     public Category(IUser owner, String name, Collection<String> notes)
     {
-        this.owner = owner;
+        this.owner = owner.getKey();
         this.name = name;
         this.notes = new HashSet<>();
 
@@ -89,13 +83,32 @@ public class Category implements ICategory
      */
     public Category(IUser owner, String name, Iterable<String> notes)
     {
-        this.owner = owner;
+        this.owner = owner.getKey();
         this.name = name;
         this.notes = new HashSet<>();
 
         for(String note : notes) {
             this.notes.add(note);
         }
+    }
+
+    /**
+     * Créer une catégorie depuis un objet parcel.
+     *
+     * @param parcel
+     */
+    public Category(Parcel parcel)
+    {
+        ParcelableUtils.assertIsValidParcel(parcel, this);
+
+        this.name = parcel.readString();
+        this.owner = UserKey.CREATOR.createFromParcel(parcel);
+        this.notes = new HashSet<>();
+
+        final int notesSize = parcel.readInt();
+        String[] notes = new String[notesSize];
+        parcel.readStringArray(notes);
+        this.notes.addAll(Arrays.asList(notes));
     }
 
     /**
@@ -128,27 +141,14 @@ public class Category implements ICategory
     }
 
     /**
-     * Change le nom de la catégorie.
-     *
-     * @param name Nouveau nom de la catégorie.
-     *
-     * @throws CategoryAlreadyExistException Si le nouveau nom est déjà pris.
-     */
-    @Override
-    public void setName(String name) throws CategoryAlreadyExistException
-    {
-        this.name = name;
-    }
-
-    /**
      * Retourne l'utilisateur possédant cette catégorie.
      *
      * @return IUser Possesseur de la catégorie.
      */
     @Override
-    public IUser getOwner()
+    public UserKey getOwner()
     {
-        return this.owner;
+        return new UserKey(this.owner);
     }
 
     /**
@@ -233,7 +233,7 @@ public class Category implements ICategory
 
     @Override
     public String toString() {
-        return "Category " + this.getName() + "@" + this.owner.getName();
+        return "Category " + this.getName() + "@" + this.owner.name;
     }
 
     /**
@@ -275,5 +275,19 @@ public class Category implements ICategory
     @Override
     public Iterator<String> iterator() {
         return this.notes.iterator();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        ParcelableUtils.writeParcelClassFlag(dest, this);
+        dest.writeString(this.getName());
+        this.owner.writeToParcel(dest, flags);
+        dest.writeInt(this.notes.size());
+        dest.writeStringArray(this.notes.toArray(new String[this.notes.size()]));
     }
 }

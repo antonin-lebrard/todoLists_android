@@ -1,5 +1,7 @@
 package com.perso.antonleb.projetandroid.data;
 
+import android.os.Parcelable;
+
 import com.perso.antonleb.projetandroid.exceptions.CategoryAlreadyExistException;
 
 /**
@@ -7,7 +9,7 @@ import com.perso.antonleb.projetandroid.exceptions.CategoryAlreadyExistException
  *
  * Catégorie contenant plusieurs notes.
  */
-public interface ICategory extends Iterable<String>
+public interface ICategory extends Iterable<String>, Parcelable
 {
     /**
      * Retourne le nom de la catégorie.
@@ -24,14 +26,14 @@ public interface ICategory extends Iterable<String>
      *
      * @throws CategoryAlreadyExistException Si le nouveau nom est déjà pris.
      */
-    public void setName(String name) throws CategoryAlreadyExistException;
+    //public void setName(String name) throws CategoryAlreadyExistException;
 
     /**
      * Retourne l'utilisateur possédant cette catégorie.
      *
      * @return Possesseur de la catégorie.
      */
-    public IUser getOwner();
+    public UserKey getOwner();
 
     /**
      * Ajoute une note à la catégorie.

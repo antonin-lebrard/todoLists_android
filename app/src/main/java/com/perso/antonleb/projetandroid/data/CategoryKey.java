@@ -1,15 +1,25 @@
 package com.perso.antonleb.projetandroid.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.perso.antonleb.projetandroid.data.creators.SimpleCreator;
+
 import java.lang.Override;
 
 /**
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>
  *
- * Cette classe permet d'identifier des objets ICategory de manière unique. Utiliser pour
- * requêter les Set de catégories.
+ * Cette classe permet d'identifier des objets ICategory de manière unique.
  */
-public final class CategoryKey
+public final class CategoryKey implements Parcelable
 {
+    /**
+     *  http://developer.android.com/reference/android/os/Parcelable.html
+     */
+    public static final Parcelable.Creator<CategoryKey> CREATOR
+            = SimpleCreator.getCreator(CategoryKey.class);
+
     /**
      * Nom de la catégorie.
      */
@@ -18,7 +28,7 @@ public final class CategoryKey
     /**
      * Utilisateur possédant la catégorie.
      */
-    public IUser owner;
+    public UserKey owner;
 
     /**
      * Créer une clef vide.
@@ -54,9 +64,22 @@ public final class CategoryKey
      * @param categoryName Nom de la catégorie recherchée.
      * @param owner Possésseur de la catégorie recherchée.
      */
-    public CategoryKey(String categoryName, IUser owner)
+    public CategoryKey(String categoryName, UserKey owner)
     {
         this.set(categoryName, owner);
+    }
+
+    /**
+     * Créer une clef depuis un objet parcel.
+     *
+     * @param parcel
+     */
+    public CategoryKey(Parcel parcel)
+    {
+        this.set(
+                parcel.readString(),
+                new UserKey(parcel)
+        );
     }
 
     /**
@@ -65,7 +88,7 @@ public final class CategoryKey
      * @param categoryName Nom de la catégorie recherchée.
      * @param owner Possésseur de la catégorie recherchée.
      */
-    public void set(String categoryName, IUser owner)
+    public void set(String categoryName, UserKey owner)
     {
         this.categoryName = categoryName;
         this.owner = owner;
@@ -90,7 +113,10 @@ public final class CategoryKey
     public void set(ICategory category)
     {
         if(category == null) this.set(null, null);
-        else this.set(category.getName(), category.getOwner());
+        else {
+            this.categoryName = category.getName();
+            this.owner.set(category.getOwner());
+        }
     }
 
     @Override
@@ -154,5 +180,21 @@ public final class CategoryKey
         int result = categoryName != null ? categoryName.hashCode() : 0;
         result = 31 * result + (owner != null ? owner.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "CategoryKey "  + this.categoryName + "@" + this.owner.name;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.categoryName);
+        this.owner.writeToParcel(dest, flags);
     }
 }

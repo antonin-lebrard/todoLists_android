@@ -5,9 +5,9 @@ import com.perso.antonleb.projetandroid.data.ICategory;
 import com.perso.antonleb.projetandroid.data.IUser;
 
 /**
- * Created by CEDRIC on 28/11/2015.
+ * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>
  */
-public class LocalServer implements INoteServer {
+public class LocalServerClient implements INoteServerClient {
     @Override
     public IUser getUser(String identifier) {
         return null;
