@@ -1,9 +1,9 @@
-package com.perso.antonleb.projetandroid.data;
+package com.perso.antonleb.projetandroid.datas;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.perso.antonleb.projetandroid.data.creators.SimpleCreator;
+import com.perso.antonleb.projetandroid.datas.creators.SimpleCreator;
 
 /**
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>

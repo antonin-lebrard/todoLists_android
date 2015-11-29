@@ -1,9 +1,8 @@
-package com.perso.antonleb.projetandroid.data;
+package com.perso.antonleb.projetandroid.datas;
 
 import android.os.Parcelable;
 
 import com.perso.antonleb.projetandroid.exceptions.CategoryAlreadyExistException;
-import com.perso.antonleb.projetandroid.exceptions.UserAlreadyExistException;
 
 import java.util.Iterator;
 
@@ -38,15 +37,13 @@ public interface IUser extends Parcelable
     public ICategory getCategory(String name);
 
     /**
-     * Créé une nouvelle catégorie pour l'utilisateur.
-     * Le nom choisi ne doit pas déjà exister.
+     * Ajouter une catégorie.
      *
-     * @param name Nom de la nouvelle catégorie.
-     * @throws CategoryAlreadyExistException Levée si la catégorie existe déjà.
+     * @param category Nouvelle catégorie.
      *
      * @return ICategory Catégorie créée.
      */
-    public ICategory createCategory(String name) throws CategoryAlreadyExistException;
+    public void addCategory(ICategory category);
 
     /**
      * Supprime une catégorie de l'utilisateur.
@@ -63,7 +60,7 @@ public interface IUser extends Parcelable
      * @param oldName Ancien nom de la catégorie.
      * @param newName Nouveau nom de la catégorie.
      */
-    public void renameCategory(String oldName, String newName) throws CategoryAlreadyExistException;
+    //public void renameCategory(String oldName, String newName) throws CategoryAlreadyExistException;
 
     /**
      * Retourne une clef vers cet utilisateur.

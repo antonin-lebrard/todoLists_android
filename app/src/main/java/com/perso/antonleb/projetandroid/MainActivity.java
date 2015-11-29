@@ -1,5 +1,8 @@
 package com.perso.antonleb.projetandroid;
 
+import android.content.Intent;
+import android.os.Debug;
+import android.os.PersistableBundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,29 +12,56 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.perso.antonleb.projetandroid.Dialogs.DialogCategory;
 import com.perso.antonleb.projetandroid.Dialogs.DialogNote;
+import com.perso.antonleb.projetandroid.datas.ICategory;
+import com.perso.antonleb.projetandroid.datas.IUser;
+import com.perso.antonleb.projetandroid.datas.UserKey;
+import com.perso.antonleb.projetandroid.services.INoteConsumer;
+import com.perso.antonleb.projetandroid.services.NoteService;
+import com.perso.antonleb.projetandroid.services.SimpleNoteServiceConnection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatConsumerActivity implements INoteConsumer
+{
 
     public SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager viewPager;
-
     private ImageButton addNote;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected SimpleNoteServiceConnection noteServiceConnection;
+
+    protected void createConnectInterface()
+    {
+        setContentView(R.layout.activity_connect);
+
+        Button button = (Button) findViewById(R.id.button_connect);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText text = (EditText) findViewById(R.id.username_edit_text);
+                noteServiceConnection.getService().loadUser(new UserKey(text.getText().toString()));
+                createLautreTruc();
+            }
+        });
+    }
+
+    protected void createLautreTruc()
+    {
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -41,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), viewPager);
         viewPager.setAdapter(mSectionsPagerAdapter);
 
-        mSectionsPagerAdapter.pushCategorie("Movies");
+        /*mSectionsPagerAdapter.pushCategorie("Movies");
         mSectionsPagerAdapter.pushCategorie("Series");
         mSectionsPagerAdapter.pushCategorie("Other");
         mSectionsPagerAdapter.pushNotes("Movies", "first");
@@ -54,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         mSectionsPagerAdapter.pushNotes("Other", "blablabla");
         mSectionsPagerAdapter.pushNotes("Other", "swfdqss");
 
-        mSectionsPagerAdapter.notifyDataSetChanged();
+        mSectionsPagerAdapter.notifyDataSetChanged();*/
 
         addNote = (ImageButton) findViewById(R.id.addNote);
         addNote.setOnClickListener(new View.OnClickListener() {
@@ -68,12 +98,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+
+        this.createConnectInterface();
+
+        // Service TEST
+        noteServiceConnection = new SimpleNoteServiceConnection(this);
+        Intent intent = new Intent(this, NoteService.class);
+        bindService(intent, noteServiceConnection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
@@ -84,7 +129,31 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public void onUserLoaded(IUser user)
+    {
+        mSectionsPagerAdapter.clear();
+        
+        if(user == null) this.createConnectInterface();
+        else {
+            Log.i(getClass().getCanonicalName(), "LOADED " + user + "... ");
+
+            Iterator<ICategory> categories = user.categoriesIterator();
+            while(categories.hasNext()) {
+                ICategory category = categories.next();
+
+                mSectionsPagerAdapter.addCategorie(category.getName());
+                for(String note : category) {
+                    mSectionsPagerAdapter.pushNotes(category.getName(), note);
+                }
+            }
+        }
+
+        mSectionsPagerAdapter.notifyDataSetChanged();
+    }
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter
+    {
 
         private ArrayList<CategorieFragment> fragments = new ArrayList<>();
         private Map<Integer, String> mFragmentTags;
@@ -149,6 +218,13 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) { return fragments.get(position); }
         @Override
         public int getCount() { return fragments.size(); }
+
+        public void clear()
+        {
+            this.fragments.clear();
+            this.mFragmentTags.clear();
+            this.notifyDataSetChanged();
+        }
 
         private Fragment getFragment(int position) {
             String tag = mFragmentTags.get(position);

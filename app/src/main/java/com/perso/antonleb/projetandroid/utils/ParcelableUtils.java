@@ -3,7 +3,7 @@ package com.perso.antonleb.projetandroid.utils;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.perso.antonleb.projetandroid.data.creators.SimplePolymorphCreator;
+import com.perso.antonleb.projetandroid.datas.creators.SimplePolymorphCreator;
 
 import java.util.LinkedList;
 

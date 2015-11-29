@@ -1,21 +1,17 @@
-package com.perso.antonleb.projetandroid.data;
+package com.perso.antonleb.projetandroid.datas;
 
 import android.os.Parcel;
 
-import com.perso.antonleb.projetandroid.data.creators.SimpleCreator;
-import com.perso.antonleb.projetandroid.data.creators.SimplePolymorphCreator;
+import com.perso.antonleb.projetandroid.datas.creators.SimpleCreator;
 import com.perso.antonleb.projetandroid.exceptions.CategoryAlreadyExistException;
-import com.perso.antonleb.projetandroid.exceptions.UserAlreadyExistException;
 import com.perso.antonleb.projetandroid.utils.ParcelableUtils;
 
 import java.lang.Override;
 
 import java.lang.String;
-import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashSet;
 
 /**
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>
@@ -110,20 +106,15 @@ public class User implements IUser
     }
 
     /**
-     * Créé une nouvelle catégorie pour l'utilisateur.
-     * Le nom choisi ne doit pas déjà exister.
+     * Ajouter une catégorie.
      *
-     * @param name Nom de la nouvelle catégorie.
-     * @throws CategoryAlreadyExistException Levée si la catégorie existe déjà.
+     * @param category Nouvelle catégorie.
      *
      * @return ICategory Catégorie créée.
      */
     @Override
-    public ICategory createCategory(String name) throws CategoryAlreadyExistException
-    {
-        Category category = new Category(this, name);
+    public void addCategory(ICategory category) {
         this.categories.put(category, category);
-        return category;
     }
 
     /**
@@ -136,20 +127,6 @@ public class User implements IUser
     {
         this.key.set(name, this.getKey());
         this.categories.remove(this.key);
-    }
-
-    /**
-     * Renome une catégorie de l'utilisateur.
-     *
-     * @throws CategoryAlreadyExistException Levée si le nouveau nom est déjà pris.
-     *
-     * @param oldName Ancien nom de la catégorie.
-     * @param newName Nouveau nom de la catégorie.
-     */
-    @Override
-    public void renameCategory(String oldName, String newName) throws CategoryAlreadyExistException
-    {
-        // @TODO
     }
 
     @Override

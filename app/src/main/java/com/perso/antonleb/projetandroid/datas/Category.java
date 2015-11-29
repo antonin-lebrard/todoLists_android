@@ -1,15 +1,13 @@
-package com.perso.antonleb.projetandroid.data;
+package com.perso.antonleb.projetandroid.datas;
 
 import android.os.Parcel;
 
-import com.perso.antonleb.projetandroid.data.creators.SimpleCreator;
-import com.perso.antonleb.projetandroid.exceptions.CategoryAlreadyExistException;
+import com.perso.antonleb.projetandroid.datas.creators.SimpleCreator;
 import com.perso.antonleb.projetandroid.utils.ParcelableUtils;
 
 import java.lang.IndexOutOfBoundsException;
 import java.lang.Override;
 import java.lang.String;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;

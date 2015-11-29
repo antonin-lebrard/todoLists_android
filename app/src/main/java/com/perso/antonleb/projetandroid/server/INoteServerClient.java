@@ -1,8 +1,8 @@
 package com.perso.antonleb.projetandroid.server;
 
-import com.perso.antonleb.projetandroid.data.CategoryKey;
-import com.perso.antonleb.projetandroid.data.ICategory;
-import com.perso.antonleb.projetandroid.data.IUser;
+import com.perso.antonleb.projetandroid.datas.CategoryKey;
+import com.perso.antonleb.projetandroid.datas.ICategory;
+import com.perso.antonleb.projetandroid.datas.IUser;
 import com.perso.antonleb.projetandroid.exceptions.ServerRequestException;
 
 /**
