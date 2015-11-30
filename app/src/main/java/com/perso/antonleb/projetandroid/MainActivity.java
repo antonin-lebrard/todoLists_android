@@ -1,12 +1,9 @@
 package com.perso.antonleb.projetandroid;
 
 import android.content.Intent;
-import android.os.Debug;
-import android.os.PersistableBundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -19,8 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.perso.antonleb.projetandroid.Dialogs.DialogCategory;
@@ -106,11 +101,12 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
             while(categories.hasNext()) {
                 ICategory category = categories.next();
 
-                mSectionsPagerAdapter.addCategorie(category.getName());
+                mSectionsPagerAdapter.addCategorie(category.getName(), false);
                 for(String note : category) {
-                    mSectionsPagerAdapter.pushNotes(category.getName(), note);
+                    mSectionsPagerAdapter.pushNote(category.getName(), note);
                 }
             }
+            isUserLoaded = true;
         }
     }
 
@@ -133,8 +129,13 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_add_category) {
-            DialogFragment dialog = new DialogCategory();
-            dialog.show(getSupportFragmentManager(), "CategoryDialog");
+            if (isUserLoaded){
+                DialogFragment dialog = new DialogCategory();
+                dialog.show(getSupportFragmentManager(), "CategoryDialog");
+            } else {
+                Snackbar snackbar = Snackbar.make(snackbarCoordinator, "Error, user not reachable", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -174,16 +175,27 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
          * @param categorieName the name of the category to add
          */
         public void addCategorie(String categorieName){
+            this.addCategorie(categorieName, true);
+        }
+        /**
+         * Add a category fragment.
+         * @param categorieName the name of the category to add
+         * @param goToIt go to the created fragment
+         */
+        public void addCategorie(String categorieName, boolean goToIt){
             fragments.add(CategorieFragment.newInstance(categorieName));
             this.notifyDataSetChanged();
-            mViewPager.setCurrentItem(fragments.size()-1);
+            if (goToIt)
+                mViewPager.setCurrentItem(fragments.size()-1);
         }
-        // TODO : remove. For test purpose only
-        public void pushCategorie(String categorieName){
-            fragments.add(CategorieFragment.newInstance(categorieName));
-        }
-        // TODO: remove. For test purpose only
-        public void pushNotes(String categorieName, String noteName){
+        /**
+         * Add a note to a category.
+         *
+         * Should be used only for activity launch
+         * @param categorieName the name of the category to add the note into
+         * @param noteName the name of the note to add
+         */
+        public void pushNote(String categorieName, String noteName){
             for (CategorieFragment cat : fragments){
                 if (cat.getName().equals(categorieName)){
                     cat.pushNote(noteName);
@@ -191,6 +203,12 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
                 }
             }
         }
+        // TODO : remove. For test purpose only
+        public void pushCategorie(String categorieName){
+            fragments.add(CategorieFragment.newInstance(categorieName));
+        }
+
+
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             Object obj = super.instantiateItem(container, position);
