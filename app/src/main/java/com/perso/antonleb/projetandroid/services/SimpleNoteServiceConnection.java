@@ -24,9 +24,10 @@ public class SimpleNoteServiceConnection implements ServiceConnection
         if(service instanceof INoteServiceBinder) {
             this.service = INoteServiceBinder.class.cast(service);
             this.service.addConsumer(this.consumer);
+            this.consumer.onBinderCreated();
         }
         else {
-            throw new IllegalArgumentException("Binded service is not an instance of NoteServiceBinder.");
+            throw new IllegalArgumentException("Binded service is not an instance of INoteServiceBinder.");
         }
     }
 

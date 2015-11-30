@@ -21,17 +21,26 @@
             android:textColor="@color/colorPrimaryDark"/>
     </LinearLayout>
     <EditText
+        android:id="@+id/edit_connect_username"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:hint="@string/hint_username_connect"
-        android:singleLine="true"
-        android:id="@+id/username_edit_text" />
+        android:singleLine="true"/>
 
     <Button
+        android:id="@+id/button_connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/connect"
-        android:id="@+id/button_connect"
-        android:layout_gravity="center_horizontal" />
+        android:background="@android:color/transparent"
+        android:layout_gravity="center_horizontal"
+        style="?android:attr/borderlessButtonStyle"/>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/snackbar_connect_text"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
+
+    </android.support.design.widget.CoordinatorLayout>
 </LinearLayout>

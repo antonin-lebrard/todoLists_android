@@ -3,6 +3,8 @@ package com.perso.antonleb.projetandroid;
 import android.content.Intent;
 import android.os.Debug;
 import android.os.PersistableBundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -37,32 +39,31 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatConsumerActivity implements INoteConsumer
 {
-
     public SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager viewPager;
     private ImageButton addNote;
+    private CoordinatorLayout snackbarCoordinator;
+
+    private String username;
+
+    private boolean isUserLoaded = false;
 
     protected SimpleNoteServiceConnection noteServiceConnection;
 
-    protected void createConnectInterface()
-    {
-        setContentView(R.layout.activity_connect);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        Button button = (Button) findViewById(R.id.button_connect);
+        username = getIntent().getExtras().getString(ConnectActivity.ARG_CONNECT_USERNAME);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText text = (EditText) findViewById(R.id.username_edit_text);
-                noteServiceConnection.getService().loadUser(new UserKey(text.getText().toString()));
-                createLautreTruc();
-            }
-        });
-    }
+        // Service creation and binding
+        noteServiceConnection = new SimpleNoteServiceConnection(this);
+        Intent intent = new Intent(this, NoteService.class);
+        bindService(intent, noteServiceConnection, BIND_AUTO_CREATE);
 
-    protected void createLautreTruc()
-    {
         setContentView(R.layout.activity_main);
+
+        snackbarCoordinator = (CoordinatorLayout) findViewById(R.id.snackbar_main_text);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,43 +72,52 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), viewPager);
         viewPager.setAdapter(mSectionsPagerAdapter);
 
-        /*mSectionsPagerAdapter.pushCategorie("Movies");
-        mSectionsPagerAdapter.pushCategorie("Series");
-        mSectionsPagerAdapter.pushCategorie("Other");
-        mSectionsPagerAdapter.pushNotes("Movies", "first");
-        mSectionsPagerAdapter.pushNotes("Movies", "second");
-        mSectionsPagerAdapter.pushNotes("Movies", "third");
-        mSectionsPagerAdapter.pushNotes("Movies", "fourth");
-        mSectionsPagerAdapter.pushNotes("Movies", "fifth");
-        mSectionsPagerAdapter.pushNotes("Movies", "sixth");
-        mSectionsPagerAdapter.pushNotes("Series", "Red Farm");
-        mSectionsPagerAdapter.pushNotes("Other", "blablabla");
-        mSectionsPagerAdapter.pushNotes("Other", "swfdqss");
-
-        mSectionsPagerAdapter.notifyDataSetChanged();*/
-
         addNote = (ImageButton) findViewById(R.id.addNote);
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String categorieName = mSectionsPagerAdapter.getCurrentCategorieName();
-                DialogFragment dialog = DialogNote.newInstance(categorieName);
-                dialog.show(getSupportFragmentManager(), "NoteDialog");
+                if (isUserLoaded) {
+                    String categorieName = mSectionsPagerAdapter.getCurrentCategorieName();
+                    DialogFragment dialog = DialogNote.newInstance(categorieName);
+                    dialog.show(getSupportFragmentManager(), "NoteDialog");
+                } else {
+                    Snackbar snackbar = Snackbar.make(snackbarCoordinator, "Error, user not log in", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                }
             }
         });
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
+    public void onBinderCreated() {
+        noteServiceConnection.getService().loadUser(new UserKey(username));
+    }
 
-        this.createConnectInterface();
+    @Override
+    public void onUserLoaded(IUser user) {
+        if(user == null){
+            Snackbar snackbar = Snackbar.make(snackbarCoordinator, "Error, user not reachable", Snackbar.LENGTH_SHORT);
+            snackbar.show();
+        }
+        else {
+            Log.i(getClass().getCanonicalName(), "LOADED " + user + "... ");
 
-        // Service TEST
-        noteServiceConnection = new SimpleNoteServiceConnection(this);
-        Intent intent = new Intent(this, NoteService.class);
-        bindService(intent, noteServiceConnection, BIND_AUTO_CREATE);
+            Iterator<ICategory> categories = user.categoriesIterator();
+            while(categories.hasNext()) {
+                ICategory category = categories.next();
+
+                mSectionsPagerAdapter.addCategorie(category.getName());
+                for(String note : category) {
+                    mSectionsPagerAdapter.pushNotes(category.getName(), note);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(noteServiceConnection);
     }
 
     @Override
@@ -127,29 +137,6 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
             dialog.show(getSupportFragmentManager(), "CategoryDialog");
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onUserLoaded(IUser user)
-    {
-        mSectionsPagerAdapter.clear();
-        
-        if(user == null) this.createConnectInterface();
-        else {
-            Log.i(getClass().getCanonicalName(), "LOADED " + user + "... ");
-
-            Iterator<ICategory> categories = user.categoriesIterator();
-            while(categories.hasNext()) {
-                ICategory category = categories.next();
-
-                mSectionsPagerAdapter.addCategorie(category.getName());
-                for(String note : category) {
-                    mSectionsPagerAdapter.pushNotes(category.getName(), note);
-                }
-            }
-        }
-
-        mSectionsPagerAdapter.notifyDataSetChanged();
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter

@@ -10,5 +10,6 @@ import com.perso.antonleb.projetandroid.consumable.IConsumer;
  */
 public interface INoteConsumer extends IConsumer
 {
+    public void onBinderCreated();
     public void onUserLoaded(IUser user);
 }
