@@ -1,13 +1,16 @@
 package com.perso.antonleb.projetandroid;
 
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -15,40 +18,63 @@ import java.util.List;
 /**
  * Created by antonleb on 09/11/2015.
  */
-public class NoteAdapter extends ArrayAdapter<INote> {
+public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
+
+    public List<INote> notes;
 
     private CategorieFragment inWithin = null;
 
     private static String urlPrefix = "https://www.google.com/search?q=";
 
-    public NoteAdapter(CategorieFragment inWithin, int resource, List<INote> objects) {
-        super(inWithin.getActivity(), resource, objects);
-        this.inWithin = inWithin;
-    }
-    @Override
-    public View getView(final int position, View convertView, final ViewGroup parent) {
-        View root = convertView;
-        if (root == null){
-            LayoutInflater inflater = LayoutInflater.from(this.getContext());
-            root = inflater.inflate(R.layout.note, null);
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        public TextView mNote;
+        public ImageButton mGoogle;
+        public ImageButton mDelete;
+        public ViewHolder(View v) {
+            super(v);
+            mNote = (TextView) v.findViewById(R.id.note);
+            mGoogle = (ImageButton) v.findViewById(R.id.google);
+            mDelete = (ImageButton) v.findViewById(R.id.delete);
         }
-        final INote note = getItem(position);
-        ((TextView)root.findViewById(R.id.note)).setText(note.getNote());
-        ((ImageButton)root.findViewById(R.id.google)).setOnClickListener(new View.OnClickListener() {
+    }
+
+    public NoteAdapter(CategorieFragment inWithin, List<INote> objects) {
+        this.inWithin = inWithin;
+        notes = objects;
+    }
+
+    @Override
+    public NoteAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.note, parent, false);
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        final int pos = position;
+        final INote note = notes.get(pos);
+        holder.mNote.setText(note.getNote());
+        holder.mGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String url = urlPrefix + note.getNote();
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
-                getContext().startActivity(i);
+                inWithin.startActivity(i);
             }
         });
-        ((ImageButton)root.findViewById(R.id.delete)).setOnClickListener(new View.OnClickListener() {
+        holder.mDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inWithin.deleteNote(position);
+                inWithin.deleteNote(pos);
             }
         });
-        return root;
+    }
+
+    @Override
+    public int getItemCount() {
+        return notes.size();
     }
 }
+

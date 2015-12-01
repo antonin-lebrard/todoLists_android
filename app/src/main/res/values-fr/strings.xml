@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Listes TODO</string>
+    <string name="layout_label">Listes TODO</string>
+    <string name="placeholder_empty_fragment">Commencez par Ajouter une Categorie</string>
+    <string name="action_add_category">Ajouter une Categorie</string>
+    <string name="action_settings">Réglages</string>
+    <string name="hint_add_category">Nom de la Categorie</string>
+    <string name="hint_username_connect">Username</string>
+    <string name="connect">Se Connecter</string>
+    <string name="content_description_add_note">Ajouter une Note</string>
+</resources>

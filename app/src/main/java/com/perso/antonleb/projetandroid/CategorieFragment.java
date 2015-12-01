@@ -1,8 +1,11 @@
 package com.perso.antonleb.projetandroid;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +20,11 @@ import java.util.List;
  */
 public class CategorieFragment extends Fragment {
 
-    ICategorie categorie;
-    ArrayAdapter<INote> adapter = null;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
-    ListView list;
-    FloatingActionButton button;
+    ICategorie categorie;
 
     public static String ARG_CATEGORIE_NAME = "categorieName";
     public static String ARG_NOTES = "notes";
@@ -43,33 +46,32 @@ public class CategorieFragment extends Fragment {
     @Override
     public void setMenuVisibility(boolean menuVisible) {
         super.setMenuVisibility(menuVisible);
-        if (menuVisible){
+        if (menuVisible)
             if (getActivity() != null)
-                getActivity().setTitle(this.categorie.getName());
-        }
+                getActivity().setTitle(capitalize(this.categorie.getName()));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.categorie, container, false);
-        list = (ListView)rootView.findViewById(R.id.listNotes);
+        mRecyclerView = (RecyclerView)rootView.findViewById(R.id.listNotes);
+
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
         ArrayList<String> notes = getArguments().getStringArrayList(ARG_NOTES);
         if (notes != null)
             for (String note : notes)
                 categorie.addNote(note);
 
-        this.adapter = new NoteAdapter(this, R.layout.note, this.categorie.getItems());
-        list.setAdapter(adapter);
-
+        this.mAdapter = new NoteAdapter(this, this.categorie.getItems());
+        mRecyclerView.setAdapter(mAdapter);
 
         View mView = getView();
-        if (mView != null) {
-            if (this.getUserVisibleHint()) {
-                getActivity().setTitle(this.categorie.getName());
-            }
-        }
+        if (mView != null)
+            if (this.getUserVisibleHint())
+                getActivity().setTitle(capitalize(this.categorie.getName()));
 
         return rootView;
     }
@@ -78,16 +80,14 @@ public class CategorieFragment extends Fragment {
     public void onResume() {
         super.onResume();
         View mView = getView();
-        if (mView != null) {
-            if (this.getUserVisibleHint()) {
-                getActivity().setTitle(this.categorie.getName());
-            }
-        }
+        if (mView != null)
+            if (this.getUserVisibleHint())
+                getActivity().setTitle(capitalize(this.categorie.getName()));
     }
 
     public boolean deleteNote(int position){
         boolean res = categorie.deleteNote(position);
-        if(res) adapter.notifyDataSetChanged();
+        if(res) mAdapter.notifyDataSetChanged();
         return res;
     }
 
@@ -98,8 +98,17 @@ public class CategorieFragment extends Fragment {
     // TODO: remove. For test purpose only
     public boolean pushNote(String name){
         boolean res = categorie.addNote(name);
-        if (adapter != null) adapter.notifyDataSetChanged();
+        if (mAdapter != null) mAdapter.notifyDataSetChanged();
         return res;
+    }
+
+    private String capitalize(String toCapitalize){
+        String capitalized = toCapitalize;
+        if (capitalized.length() == 1)
+            capitalized = capitalized.toUpperCase();
+        if (capitalized.length() > 1)
+            capitalized = capitalized.substring(0,1).toUpperCase() + capitalized.substring(1);
+        return capitalized;
     }
 
 }
