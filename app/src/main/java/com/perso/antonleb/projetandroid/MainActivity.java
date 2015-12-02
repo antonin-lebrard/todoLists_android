@@ -163,7 +163,6 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter
     {
-
         private ArrayList<CategorieFragment> fragments = new ArrayList<>();
         private Map<Integer, String> mFragmentTags;
         private FragmentManager mFragmentManager;

@@ -11,4 +11,15 @@
         android:layout_marginTop="2dp"
         android:layout_gravity="left|top"/>
 
+    <TextView
+        android:id="@+id/text_placeholder_empty_note"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        android:fontFamily="serif"
+        android:text="@string/placeholder_empty_note"/>
+
 </FrameLayout>

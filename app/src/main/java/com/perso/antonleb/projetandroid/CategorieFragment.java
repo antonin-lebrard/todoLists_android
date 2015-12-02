@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,9 @@ public class CategorieFragment extends Fragment {
 
     private OnDeleteNoteListener onDeleteNoteListener;
     private OnAddNoteListener onAddNoteListener;
+
+    private View mPlaceholder;
+    private boolean placeholderVisible = true;
 
     ICategorie categorie;
 
@@ -59,15 +63,19 @@ public class CategorieFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.categorie, container, false);
+        mPlaceholder = rootView.findViewById(R.id.text_placeholder_empty_note);
+
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.listNotes);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         ArrayList<String> notes = getArguments().getStringArrayList(ARG_NOTES);
-        if (notes != null)
+        if (notes != null) {
+            if (!placeholderVisible) mPlaceholder.setVisibility(View.INVISIBLE);
             for (String note : notes)
                 categorie.addNote(note);
+        }
 
         this.mAdapter = new NoteAdapter(this, this.categorie.getItems());
         mRecyclerView.setAdapter(mAdapter);
@@ -93,6 +101,10 @@ public class CategorieFragment extends Fragment {
         INote deletedNote = categorie.deleteNote(position);
         if(deletedNote != null){
             mAdapter.notifyItemRemoved(position);
+            if (mAdapter.getItemCount() == 0){
+                placeholderVisible = true;
+                mPlaceholder.setVisibility(View.VISIBLE);
+            }
             if (onDeleteNoteListener != null)
                 onDeleteNoteListener.onDeleteNote(this.categorie, deletedNote);
         }
@@ -105,8 +117,10 @@ public class CategorieFragment extends Fragment {
 
     public boolean pushNote(String name){
         INote pushedNote = categorie.addNote(name);
+        placeholderVisible = false;
         if (mAdapter != null){
             mAdapter.notifyItemInserted(mAdapter.getItemCount());
+            if (!placeholderVisible) mPlaceholder.setVisibility(View.INVISIBLE);
             if (onAddNoteListener != null && pushedNote != null)
                 onAddNoteListener.onAddNote(this.categorie, pushedNote);
         }
