@@ -1,24 +1,21 @@
 package com.perso.antonleb.projetandroid;
 
 import android.content.Intent;
-import android.media.Image;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by antonleb on 09/11/2015.
  */
-public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
+public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
     public List<INote> notes;
 
@@ -26,11 +23,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     private static String urlPrefix = "https://www.google.com/search?q=";
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class NoteViewHolder extends RecyclerView.ViewHolder{
         public TextView mNote;
         public ImageButton mGoogle;
         public ImageButton mDelete;
-        public ViewHolder(View v) {
+        public NoteViewHolder(View v) {
             super(v);
             mNote = (TextView) v.findViewById(R.id.note);
             mGoogle = (ImageButton) v.findViewById(R.id.google);
@@ -44,14 +41,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
     @Override
-    public NoteAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NoteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.note, parent, false);
-        ViewHolder vh = new ViewHolder(v);
+        NoteViewHolder vh = new NoteViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(NoteViewHolder holder, int position) {
         final int pos = position;
         final INote note = notes.get(pos);
         holder.mNote.setText(note.getNote());

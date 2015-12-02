@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.perso.antonleb.projetandroid.listeners.OnAddNoteListener;
+import com.perso.antonleb.projetandroid.listeners.OnDeleteNoteListener;
 import com.perso.antonleb.projetandroid.Dialogs.DialogCategory;
 import com.perso.antonleb.projetandroid.Dialogs.DialogNote;
 import com.perso.antonleb.projetandroid.datas.ICategory;
@@ -73,10 +75,15 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
             public void onClick(View view) {
                 if (isUserLoaded) {
                     String categorieName = mSectionsPagerAdapter.getCurrentCategorieName();
-                    DialogFragment dialog = DialogNote.newInstance(categorieName);
-                    dialog.show(getSupportFragmentManager(), "NoteDialog");
+                    if (categorieName == null){
+                        Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.error_no_categories, Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    } else {
+                        DialogFragment dialog = DialogNote.newInstance(categorieName);
+                        dialog.show(getSupportFragmentManager(), "NoteDialog");
+                    }
                 } else {
-                    Snackbar snackbar = Snackbar.make(snackbarCoordinator, "Error, user not log in", Snackbar.LENGTH_SHORT);
+                    Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.error_user_not_logon, Snackbar.LENGTH_SHORT);
                     snackbar.show();
                 }
             }
@@ -91,7 +98,7 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
     @Override
     public void onUserLoaded(IUser user) {
         if(user == null){
-            Snackbar snackbar = Snackbar.make(snackbarCoordinator, "Error, user not reachable", Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.error_user_not_reachable, Snackbar.LENGTH_SHORT);
             snackbar.show();
         }
         else {
@@ -106,6 +113,20 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
                     mSectionsPagerAdapter.pushNote(category.getName(), note);
                 }
             }
+            mSectionsPagerAdapter.setGlobalOnAddNoteListener(new OnAddNoteListener() {
+                @Override
+                public void onAddNote(ICategorie categorie, INote note) {
+                    Log.d("Add Listener", "Category : " + categorie.getName() + " Note : " + note.getNote());
+                    /// TODO : Code to insert note on server via noteServiceConnection
+                }
+            });
+            mSectionsPagerAdapter.setGlobalOnDeleteNoteListener(new OnDeleteNoteListener() {
+                @Override
+                public void onDeleteNote(ICategorie categorie, INote note) {
+                    Log.d("Delete Listener", "Category : " + categorie.getName() + " Note : " + note.getNote());
+                    /// TODO : Code to delete note on server via noteServiceConnection
+                }
+            });
             isUserLoaded = true;
         }
     }
@@ -133,7 +154,7 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
                 DialogFragment dialog = new DialogCategory();
                 dialog.show(getSupportFragmentManager(), "CategoryDialog");
             } else {
-                Snackbar snackbar = Snackbar.make(snackbarCoordinator, "Error, user not reachable", Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.error_user_not_reachable, Snackbar.LENGTH_SHORT);
                 snackbar.show();
             }
         }
@@ -147,6 +168,9 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
         private Map<Integer, String> mFragmentTags;
         private FragmentManager mFragmentManager;
         private ViewPager mViewPager;
+
+        private OnDeleteNoteListener globalOnDeleteNoteListener;
+        private OnAddNoteListener globalOnAddNoteListener;
 
         public SectionsPagerAdapter(FragmentManager fm, ViewPager viewPager) {
             super(fm);
@@ -183,14 +207,16 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
          * @param goToIt go to the created fragment
          */
         public void addCategorie(String categorieName, boolean goToIt){
-            fragments.add(CategorieFragment.newInstance(categorieName));
+            CategorieFragment newFragment = CategorieFragment.newInstance(categorieName);
+            fragments.add(newFragment);
+            newFragment.setOnAddNoteListener(globalOnAddNoteListener);
+            newFragment.setOnDeleteNoteListener(globalOnDeleteNoteListener);
             this.notifyDataSetChanged();
             if (goToIt)
                 mViewPager.setCurrentItem(fragments.size()-1);
         }
         /**
          * Add a note to a category.
-         *
          * Should be used only for activity launch
          * @param categorieName the name of the category to add the note into
          * @param noteName the name of the note to add
@@ -203,11 +229,29 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
                 }
             }
         }
-        // TODO : remove. For test purpose only
-        public void pushCategorie(String categorieName){
-            fragments.add(CategorieFragment.newInstance(categorieName));
+        /**
+         * Add a listener on note deletion
+         * @param listener the delete listener to apply on each note
+         */
+        public void setGlobalOnDeleteNoteListener(OnDeleteNoteListener listener){
+            this.globalOnDeleteNoteListener = listener;
+            for (CategorieFragment cf : fragments){
+                cf.setOnDeleteNoteListener(listener);
+            }
         }
 
+        /**
+         * Add a listener on note insertion
+         * @param listener the add listener to apply on each note
+         */
+        public void setGlobalOnAddNoteListener(OnAddNoteListener listener){
+            this.globalOnAddNoteListener = listener;
+            for (CategorieFragment cf : fragments){
+                cf.setOnAddNoteListener(listener);
+            }
+        }
+
+        /**== Functioning of the FragmentPagerAdapter  ==**/
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
@@ -220,7 +264,9 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
             return obj;
         }
         @Override
-        public Fragment getItem(int position) { return fragments.get(position); }
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
         @Override
         public int getCount() { return fragments.size(); }
 

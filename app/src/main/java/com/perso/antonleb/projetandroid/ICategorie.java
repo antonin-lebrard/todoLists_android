@@ -9,8 +9,8 @@ public interface ICategorie {
 
     List<INote> getItems();
     String getName();
-    boolean addNote(String note);
-    boolean deleteNote(String note);
-    boolean deleteNote(int index);
+    INote addNote(String note);
+    INote deleteNote(String note);
+    INote deleteNote(int index);
 
 }

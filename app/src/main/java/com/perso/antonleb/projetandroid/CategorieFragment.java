@@ -1,16 +1,15 @@
 package com.perso.antonleb.projetandroid;
 
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
+import com.perso.antonleb.projetandroid.listeners.OnAddNoteListener;
+import com.perso.antonleb.projetandroid.listeners.OnDeleteNoteListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +23,9 @@ public class CategorieFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private OnDeleteNoteListener onDeleteNoteListener;
+    private OnAddNoteListener onAddNoteListener;
+
     ICategorie categorie;
 
     public static String ARG_CATEGORIE_NAME = "categorieName";
@@ -32,6 +34,7 @@ public class CategorieFragment extends Fragment {
     public static CategorieFragment newInstance(String categorieName){
         return newInstance(categorieName, new ArrayList<String>());
     }
+
     public static CategorieFragment newInstance(String categorieName, ArrayList<String> notes){
         CategorieFragment frag = new CategorieFragment();
         frag.categorie = new CategorieImpl(categorieName);
@@ -86,20 +89,35 @@ public class CategorieFragment extends Fragment {
     }
 
     public boolean deleteNote(int position){
-        boolean res = categorie.deleteNote(position);
-        if(res) mAdapter.notifyDataSetChanged();
-        return res;
+        INote deletedNote = categorie.deleteNote(position);
+        if(deletedNote != null){
+            mAdapter.notifyDataSetChanged();
+            if (onDeleteNoteListener != null)
+                onDeleteNoteListener.onDeleteNote(this.categorie, deletedNote);
+        }
+        return deletedNote != null;
     }
 
     public String getName(){
         return categorie.getName();
     }
 
-    // TODO: remove. For test purpose only
     public boolean pushNote(String name){
-        boolean res = categorie.addNote(name);
-        if (mAdapter != null) mAdapter.notifyDataSetChanged();
-        return res;
+        INote pushedNote = categorie.addNote(name);
+        if (mAdapter != null){
+            mAdapter.notifyDataSetChanged();
+            if (onAddNoteListener != null && pushedNote != null)
+                onAddNoteListener.onAddNote(this.categorie, pushedNote);
+        }
+        return pushedNote != null;
+    }
+
+    public void setOnDeleteNoteListener(OnDeleteNoteListener listener){
+        this.onDeleteNoteListener = listener;
+    }
+
+    public void setOnAddNoteListener(OnAddNoteListener listener){
+        this.onAddNoteListener = listener;
     }
 
     private String capitalize(String toCapitalize){
@@ -121,31 +139,33 @@ class CategorieImpl implements ICategorie {
 
     public List<INote> getItems(){ return notes; }
     public String getName() { return this.name; }
-    public boolean addNote(String note){
-        if (note.equals("")) return false;
-        NoteImpl tmp = new NoteImpl(note);
-        if (!notes.contains(tmp)){
-            notes.add(tmp);
-            return true;
+    public INote addNote(String note){
+        if (note.equals("")) return null;
+        NoteImpl newNote = new NoteImpl(note);
+        if (!notes.contains(newNote)){
+            notes.add(newNote);
+            return newNote;
         }
-        return false;
+        return null;
     }
-    public boolean deleteNote(String note){
-        if (note.equals("")) return false;
+    public INote deleteNote(String note){
+        if (note.equals("")) return null;
         for (int i = 0; i < notes.size(); i++){
             if (notes.get(i).hashCode() == note.hashCode()){
+                INote returning = notes.get(i);
                 notes.remove(i);
-                return true;
+                return returning;
             }
         }
-        return false;
+        return null;
     }
-    public boolean deleteNote(int index){
+    public INote deleteNote(int index){
         if (index < notes.size() && index > -1){
+            INote returning = notes.get(index);
             notes.remove(index);
-            return true;
+            return returning;
         }
-        return false;
+        return null;
     }
 }
 
