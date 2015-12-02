@@ -6,7 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -48,14 +51,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     }
 
     @Override
-    public void onBindViewHolder(NoteViewHolder holder, int position) {
-        final int pos = position;
-        final INote note = notes.get(pos);
+    public void onBindViewHolder(final NoteViewHolder holder, final int position) {
+        final INote note = notes.get(position);
         holder.mNote.setText(note.getNote());
         holder.mGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = urlPrefix + note.getNote();
+                String url = urlPrefix + holder.mNote.getText().toString();
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 inWithin.startActivity(i);
@@ -64,7 +66,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         holder.mDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inWithin.deleteNote(pos);
+                inWithin.deleteNote(holder.getAdapterPosition());
             }
         });
     }

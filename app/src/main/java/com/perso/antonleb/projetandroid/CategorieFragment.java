@@ -2,6 +2,7 @@ package com.perso.antonleb.projetandroid;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -91,7 +92,7 @@ public class CategorieFragment extends Fragment {
     public boolean deleteNote(int position){
         INote deletedNote = categorie.deleteNote(position);
         if(deletedNote != null){
-            mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemRemoved(position);
             if (onDeleteNoteListener != null)
                 onDeleteNoteListener.onDeleteNote(this.categorie, deletedNote);
         }
@@ -105,7 +106,7 @@ public class CategorieFragment extends Fragment {
     public boolean pushNote(String name){
         INote pushedNote = categorie.addNote(name);
         if (mAdapter != null){
-            mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemInserted(mAdapter.getItemCount());
             if (onAddNoteListener != null && pushedNote != null)
                 onAddNoteListener.onAddNote(this.categorie, pushedNote);
         }
