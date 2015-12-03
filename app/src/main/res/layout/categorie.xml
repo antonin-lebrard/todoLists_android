@@ -20,6 +20,8 @@
         android:textSize="20sp"
         android:textStyle="bold|italic"
         android:fontFamily="serif"
-        android:text="@string/placeholder_empty_note"/>
+        android:text="@string/placeholder_empty_note"
+        android:alpha="0.0"
+        android:visibility="invisible"/>
 
 </FrameLayout>

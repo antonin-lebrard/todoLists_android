@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by antonleb on 09/11/2015.
  */
-public interface ICategorie {
+public interface ICategory {
 
     List<INote> getItems();
     String getName();

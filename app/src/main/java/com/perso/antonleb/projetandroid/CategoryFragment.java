@@ -2,13 +2,13 @@ package com.perso.antonleb.projetandroid;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
+import android.view.animation.DecelerateInterpolator;
 
 import com.perso.antonleb.projetandroid.listeners.OnAddNoteListener;
 import com.perso.antonleb.projetandroid.listeners.OnDeleteNoteListener;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by antonleb on 09/11/2015.
  */
-public class CategorieFragment extends Fragment {
+public class CategoryFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -28,20 +28,22 @@ public class CategorieFragment extends Fragment {
     private OnDeleteNoteListener onDeleteNoteListener;
     private OnAddNoteListener onAddNoteListener;
 
-    private View mPlaceholder;
-    private boolean placeholderVisible = true;
+    private View placeholder;
+    private boolean placeholderVisible = false;
 
-    ICategorie categorie;
+    private ViewPropertyAnimator animator;
+
+    ICategory categorie;
 
     public static String ARG_CATEGORIE_NAME = "categorieName";
     public static String ARG_NOTES = "notes";
 
-    public static CategorieFragment newInstance(String categorieName){
+    public static CategoryFragment newInstance(String categorieName){
         return newInstance(categorieName, new ArrayList<String>());
     }
 
-    public static CategorieFragment newInstance(String categorieName, ArrayList<String> notes){
-        CategorieFragment frag = new CategorieFragment();
+    public static CategoryFragment newInstance(String categorieName, ArrayList<String> notes){
+        CategoryFragment frag = new CategoryFragment();
         frag.categorie = new CategorieImpl(categorieName);
         Bundle args = new Bundle();
         args.putStringArrayList(ARG_NOTES, notes);
@@ -49,7 +51,7 @@ public class CategorieFragment extends Fragment {
         return frag;
     }
 
-    public CategorieFragment(){}
+    public CategoryFragment(){}
 
     @Override
     public void setMenuVisibility(boolean menuVisible) {
@@ -63,7 +65,12 @@ public class CategorieFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.categorie, container, false);
-        mPlaceholder = rootView.findViewById(R.id.text_placeholder_empty_note);
+        placeholder = rootView.findViewById(R.id.text_placeholder_empty_note);
+
+        placeholder.setVisibility(View.VISIBLE);
+        placeholderVisible = true;
+        animator = placeholder.animate().alpha(1.0f).setDuration(500).setStartDelay(500).setInterpolator(new DecelerateInterpolator());
+        animator.start();
 
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.listNotes);
 
@@ -72,7 +79,7 @@ public class CategorieFragment extends Fragment {
 
         ArrayList<String> notes = getArguments().getStringArrayList(ARG_NOTES);
         if (notes != null) {
-            if (!placeholderVisible) mPlaceholder.setVisibility(View.INVISIBLE);
+            if (!placeholderVisible) placeholder.setVisibility(View.INVISIBLE);
             for (String note : notes)
                 categorie.addNote(note);
         }
@@ -103,7 +110,8 @@ public class CategorieFragment extends Fragment {
             mAdapter.notifyItemRemoved(position);
             if (mAdapter.getItemCount() == 0){
                 placeholderVisible = true;
-                mPlaceholder.setVisibility(View.VISIBLE);
+                placeholder.setVisibility(View.VISIBLE);
+                animator.start();
             }
             if (onDeleteNoteListener != null)
                 onDeleteNoteListener.onDeleteNote(this.categorie, deletedNote);
@@ -120,7 +128,10 @@ public class CategorieFragment extends Fragment {
         placeholderVisible = false;
         if (mAdapter != null){
             mAdapter.notifyItemInserted(mAdapter.getItemCount());
-            if (!placeholderVisible) mPlaceholder.setVisibility(View.INVISIBLE);
+            if (!placeholderVisible){
+                animator.cancel();
+                placeholder.setVisibility(View.INVISIBLE);
+            }
             if (onAddNoteListener != null && pushedNote != null)
                 onAddNoteListener.onAddNote(this.categorie, pushedNote);
         }
@@ -146,7 +157,7 @@ public class CategorieFragment extends Fragment {
 
 }
 
-class CategorieImpl implements ICategorie {
+class CategorieImpl implements ICategory {
     String name;
     ArrayList<INote> notes = new ArrayList<INote>();
 

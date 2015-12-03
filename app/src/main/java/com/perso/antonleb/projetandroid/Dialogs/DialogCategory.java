@@ -17,16 +17,14 @@ import android.widget.TextView;
 
 import com.perso.antonleb.projetandroid.MainActivity;
 import com.perso.antonleb.projetandroid.R;
+import com.perso.antonleb.projetandroid.listeners.CategoryValidationListener;
 
 /**
  * Created by antonleb on 26/11/2015.
  */
 public class DialogCategory extends android.support.v4.app.DialogFragment {
 
-    public interface CategoryListener {
-        void onCategoryValidation(String category);
-    }
-    private CategoryListener listener;
+    private CategoryValidationListener listener;
     private EditText categoryName;
 
     @NonNull
@@ -72,10 +70,10 @@ public class DialogCategory extends android.support.v4.app.DialogFragment {
 
     @Override
     public void onAttach(final Activity activity) {
-        listener = new CategoryListener() {
+        listener = new CategoryValidationListener() {
             @Override
             public void onCategoryValidation(String categoryName) {
-                ((MainActivity)getActivity()).mSectionsPagerAdapter.addCategorie(categoryName);
+                ((MainActivity)getActivity()).mSectionsPagerAdapter.addCategory(categoryName, true);
             }
         };
         super.onAttach(activity);
