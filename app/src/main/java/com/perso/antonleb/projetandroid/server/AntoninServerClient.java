@@ -1,7 +1,6 @@
 package com.perso.antonleb.projetandroid.server;
 
 import android.util.Log;
-import android.webkit.HttpAuthHandler;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -20,11 +19,8 @@ import com.perso.antonleb.projetandroid.datas.IUser;
 import com.perso.antonleb.projetandroid.datas.User;
 import com.perso.antonleb.projetandroid.exceptions.ServerRequestException;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

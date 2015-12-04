@@ -1,7 +1,5 @@
 package com.perso.antonleb.projetandroid.async;
 
-import android.os.AsyncTask;
-
 import com.perso.antonleb.projetandroid.consumable.ConsumableAsynTask;
 import com.perso.antonleb.projetandroid.datas.IUser;
 import com.perso.antonleb.projetandroid.datas.UserKey;

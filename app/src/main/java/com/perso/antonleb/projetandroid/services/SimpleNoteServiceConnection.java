@@ -3,7 +3,6 @@ package com.perso.antonleb.projetandroid.services;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
 
 /**
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>

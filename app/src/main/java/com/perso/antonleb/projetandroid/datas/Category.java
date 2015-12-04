@@ -5,14 +5,11 @@ import android.os.Parcel;
 import com.perso.antonleb.projetandroid.datas.creators.SimpleCreator;
 import com.perso.antonleb.projetandroid.utils.ParcelableUtils;
 
-import java.lang.IndexOutOfBoundsException;
-import java.lang.Override;
-import java.lang.String;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>
@@ -155,9 +152,9 @@ public class Category implements ICategory
      * @param note Note à ajouter.
      */
     @Override
-    public void addNote(String note)
+    public String addNote(String note)
     {
-        this.notes.add(note);
+        return this.notes.add(note) ? note : null;
     }
 
     /**
@@ -166,9 +163,9 @@ public class Category implements ICategory
      * @param note Note à supprimer.
      */
     @Override
-    public void removeNote(String note)
+    public String removeNote(String note)
     {
-        this.notes.remove(note);
+        return this.notes.remove(note) ? note : null;
     }
 
     /**
@@ -177,7 +174,7 @@ public class Category implements ICategory
      * @param index Index de la note à supprimer.
      */
     @Override
-    public void removeNote(int index)
+    public String removeNote(int index)
     {
         this.assertIsValidIndex(index);
 
@@ -185,7 +182,11 @@ public class Category implements ICategory
 
         for(int i = 0; i < index; ++i) iterator.next();
 
+        String note = iterator.next();
+
         iterator.remove();
+
+        return note;
     }
 
     /**

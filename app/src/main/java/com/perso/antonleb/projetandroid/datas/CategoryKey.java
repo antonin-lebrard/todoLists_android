@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.perso.antonleb.projetandroid.datas.creators.SimpleCreator;
 
-import java.lang.Override;
-
 /**
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>
  *

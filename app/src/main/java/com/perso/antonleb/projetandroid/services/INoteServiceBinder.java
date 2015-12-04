@@ -2,8 +2,8 @@ package com.perso.antonleb.projetandroid.services;
 
 import android.os.IBinder;
 
-import com.perso.antonleb.projetandroid.datas.UserKey;
 import com.perso.antonleb.projetandroid.consumable.IConsumable;
+import com.perso.antonleb.projetandroid.datas.UserKey;
 
 /**
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>

@@ -10,6 +10,7 @@ import com.perso.antonleb.projetandroid.listeners.OnAddNoteListener;
 import com.perso.antonleb.projetandroid.listeners.OnDeleteNoteListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ import java.util.Map;
  * Created by antonleb on 03/12/2015.
  */
 public class CategoriesViewHolderImpl extends FragmentPagerAdapter implements CategoriesViewHolder {
+
+    private String username;
 
     private ArrayList<CategoryFragmentHolderImpl> fragments = new ArrayList<>();
     private Map<Integer, String> mFragmentTags;
@@ -26,23 +29,42 @@ public class CategoriesViewHolderImpl extends FragmentPagerAdapter implements Ca
     private OnDeleteNoteListener globalOnDeleteNoteListener;
     private OnAddNoteListener globalOnAddNoteListener;
 
-    public CategoriesViewHolderImpl(FragmentManager fm, ViewPager viewPager) {
+    public CategoriesViewHolderImpl(FragmentManager fm, ViewPager viewPager, String username) {
         super(fm);
         mFragmentManager = fm;
-        mFragmentTags = new HashMap<Integer, String>();
+        mFragmentTags = new HashMap<>();
         mViewPager = viewPager;
+        this.username = username;
     }
-
+    @Override
     public void pushNoteToCurrent(String noteName){
         CategoryFragmentHolderImpl current = (CategoryFragmentHolderImpl)getFragment(mViewPager.getCurrentItem());
         if (current != null) current.pushNote(noteName);
     }
-    public String getCurrentCategorieName(){
+    @Override
+    public String getCurrentCategoryName(){
         CategoryFragmentHolderImpl current = (CategoryFragmentHolderImpl)getFragment(mViewPager.getCurrentItem());
         return current == null ? null : current.getName();
     }
+    @Override
     public void addCategory(String categoryName){
-        CategoryFragmentHolderImpl newFragment = CategoryFragmentHolderImpl.newInstance(categoryName);
+        CategoryFragmentHolderImpl newFragment = CategoryFragmentHolderImpl.newInstance(this.username, categoryName);
+        fragments.add(newFragment);
+        newFragment.setOnAddNoteListener(globalOnAddNoteListener);
+        newFragment.setOnDeleteNoteListener(globalOnDeleteNoteListener);
+        this.notifyDataSetChanged();
+    }
+    @Override
+    public void addCategory(String categoryName, Collection<String> notes){
+        CategoryFragmentHolderImpl newFragment = CategoryFragmentHolderImpl.newInstance(this.username, categoryName, notes);
+        fragments.add(newFragment);
+        newFragment.setOnAddNoteListener(globalOnAddNoteListener);
+        newFragment.setOnDeleteNoteListener(globalOnDeleteNoteListener);
+        this.notifyDataSetChanged();
+    }
+    @Override
+    public void addCategory(String categoryName, Iterable<String> notes){
+        CategoryFragmentHolderImpl newFragment = CategoryFragmentHolderImpl.newInstance(this.username, categoryName, notes);
         fragments.add(newFragment);
         newFragment.setOnAddNoteListener(globalOnAddNoteListener);
         newFragment.setOnDeleteNoteListener(globalOnDeleteNoteListener);

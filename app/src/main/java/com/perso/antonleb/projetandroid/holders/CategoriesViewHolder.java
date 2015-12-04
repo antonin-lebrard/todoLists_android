@@ -15,5 +15,5 @@ public interface CategoriesViewHolder extends CategoriesHolder, GlobalNoteListen
      * Get the name of the current Category (the one visible)
      * @return the name of the current Category
      */
-    String getCurrentCategorieName();
+    String getCurrentCategoryName();
 }

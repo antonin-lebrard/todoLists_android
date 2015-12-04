@@ -1,7 +1,7 @@
 package com.perso.antonleb.projetandroid.services;
 
-import com.perso.antonleb.projetandroid.datas.IUser;
 import com.perso.antonleb.projetandroid.consumable.IConsumer;
+import com.perso.antonleb.projetandroid.datas.IUser;
 
 /**
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>

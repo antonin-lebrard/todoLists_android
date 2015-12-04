@@ -9,17 +9,15 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.perso.antonleb.projetandroid.datas.ICategory;
 import com.perso.antonleb.projetandroid.holders.CategoryFragmentHolder;
-import com.perso.antonleb.projetandroid.holders.NotesHolder;
-
-import java.util.List;
 
 /**
  * Created by antonleb on 09/11/2015.
  */
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
-    public List<INote> notes;
+    public ICategory category;
 
     private CategoryFragmentHolder inWithin = null;
 
@@ -37,9 +35,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         }
     }
 
-    public NoteAdapter(CategoryFragmentHolder inWithin, List<INote> objects) {
+    public NoteAdapter(CategoryFragmentHolder inWithin, ICategory category) {
         this.inWithin = inWithin;
-        notes = objects;
+        this.category = category;
     }
 
     @Override
@@ -51,8 +49,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
     @Override
     public void onBindViewHolder(final NoteViewHolder holder, final int position) {
-        final INote note = notes.get(position);
-        holder.mNote.setText(note.getNote());
+        final String note = category.getNote(position);
+        holder.mNote.setText(note);
         holder.mGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +70,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
     @Override
     public int getItemCount() {
-        return notes.size();
+        return category.size();
     }
 }
 

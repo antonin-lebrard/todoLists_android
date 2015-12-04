@@ -1,17 +1,16 @@
 package com.perso.antonleb.projetandroid.holders;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.perso.antonleb.projetandroid.ICategory;
-import com.perso.antonleb.projetandroid.INote;
 import com.perso.antonleb.projetandroid.NoteAdapter;
 import com.perso.antonleb.projetandroid.R;
+import com.perso.antonleb.projetandroid.datas.ICategory;
 import com.perso.antonleb.projetandroid.listeners.OnAddNoteListener;
 import com.perso.antonleb.projetandroid.listeners.OnDeleteNoteListener;
 
@@ -32,14 +31,14 @@ public abstract class CategoryFragmentHolder extends Fragment implements Categor
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.categorie, container, false);
+        View rootView = inflater.inflate(R.layout.category, container, false);
 
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.listNotes);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        this.mAdapter = new NoteAdapter(this, this.category.getItems());
+        this.mAdapter = new NoteAdapter(this, this.category);
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
@@ -50,7 +49,7 @@ public abstract class CategoryFragmentHolder extends Fragment implements Categor
 
     @Override
     public boolean pushNote(String noteName) {
-        INote pushedNote = category.addNote(noteName);
+        String pushedNote = category.addNote(noteName);
         if (mAdapter != null){
             mAdapter.notifyItemInserted(mAdapter.getItemCount());
             if (onAddNoteListener != null && pushedNote != null)
@@ -62,14 +61,14 @@ public abstract class CategoryFragmentHolder extends Fragment implements Categor
     @Override
     public boolean deleteNote(String noteName) {
         int position = 0;
-        int len = category.getItems().size();
+        int len = category.size();
         for (int i = 0; i < len; i++){
-            if (category.getItems().get(i).getNote().equals(noteName)){
+            if (category.getNote(i).equals(noteName)){
                 position = i;
                 break;
             }
         }
-        INote deletedNote = category.deleteNote(noteName);
+        String deletedNote = category.removeNote(noteName);
         if(deletedNote != null){
             mAdapter.notifyItemRemoved(position);
             if (onDeleteNoteListener != null)
@@ -80,7 +79,7 @@ public abstract class CategoryFragmentHolder extends Fragment implements Categor
 
     @Override
     public boolean deleteNote(int position) {
-        INote deletedNote = category.deleteNote(position);
+        String deletedNote = category.removeNote(position);
         if(deletedNote != null){
             mAdapter.notifyItemRemoved(position);
             if (onDeleteNoteListener != null)

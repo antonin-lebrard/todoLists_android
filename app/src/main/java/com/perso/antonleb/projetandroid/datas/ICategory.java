@@ -40,21 +40,21 @@ public interface ICategory extends Iterable<String>, Parcelable
      *
      * @param note Note à ajouter.
      */
-    public void addNote(String note);
+    public String addNote(String note);
 
     /**
      * Supprime une note de la catégorie.
      *
      * @param note Note à supprimer.
      */
-    public void removeNote(String note);
+    public String removeNote(String note);
 
     /**
      * Supprime une note à un index particulier.
      *
      * @param index Index de la note à supprimer.
      */
-    public void removeNote(int index);
+    public String removeNote(int index);
 
     /**
      * Retourne une note à un index particulier.
