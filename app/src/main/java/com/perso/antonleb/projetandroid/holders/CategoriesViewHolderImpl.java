@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.ViewGroup;
 
-import com.perso.antonleb.projetandroid.CategoryFragment;
 import com.perso.antonleb.projetandroid.listeners.OnAddNoteListener;
 import com.perso.antonleb.projetandroid.listeners.OnDeleteNoteListener;
 
@@ -19,7 +18,7 @@ import java.util.Map;
  */
 public class CategoriesViewHolderImpl extends FragmentPagerAdapter implements CategoriesViewHolder {
 
-    private ArrayList<CategoryFragment> fragments = new ArrayList<>();
+    private ArrayList<CategoryFragmentHolderImpl> fragments = new ArrayList<>();
     private Map<Integer, String> mFragmentTags;
     private FragmentManager mFragmentManager;
     private ViewPager mViewPager;
@@ -35,15 +34,15 @@ public class CategoriesViewHolderImpl extends FragmentPagerAdapter implements Ca
     }
 
     public void pushNoteToCurrent(String noteName){
-        CategoryFragment current = (CategoryFragment)getFragment(mViewPager.getCurrentItem());
+        CategoryFragmentHolderImpl current = (CategoryFragmentHolderImpl)getFragment(mViewPager.getCurrentItem());
         if (current != null) current.pushNote(noteName);
     }
     public String getCurrentCategorieName(){
-        CategoryFragment current = (CategoryFragment)getFragment(mViewPager.getCurrentItem());
+        CategoryFragmentHolderImpl current = (CategoryFragmentHolderImpl)getFragment(mViewPager.getCurrentItem());
         return current == null ? null : current.getName();
     }
     public void addCategory(String categoryName){
-        CategoryFragment newFragment = CategoryFragment.newInstance(categoryName);
+        CategoryFragmentHolderImpl newFragment = CategoryFragmentHolderImpl.newInstance(categoryName);
         fragments.add(newFragment);
         newFragment.setOnAddNoteListener(globalOnAddNoteListener);
         newFragment.setOnDeleteNoteListener(globalOnDeleteNoteListener);
@@ -60,7 +59,7 @@ public class CategoriesViewHolderImpl extends FragmentPagerAdapter implements Ca
             mViewPager.setCurrentItem(fragments.size()-1);
     }
     public void addNote(String categoryName, String noteName){
-        for (CategoryFragment cat : fragments){
+        for (CategoryFragmentHolderImpl cat : fragments){
             if (cat.getName().equals(categoryName)){
                 cat.pushNote(noteName);
                 break;
@@ -69,13 +68,13 @@ public class CategoriesViewHolderImpl extends FragmentPagerAdapter implements Ca
     }
     public void setGlobalOnDeleteNoteListener(OnDeleteNoteListener listener){
         this.globalOnDeleteNoteListener = listener;
-        for (CategoryFragment cf : fragments){
+        for (CategoryFragmentHolderImpl cf : fragments){
             cf.setOnDeleteNoteListener(listener);
         }
     }
     public void setGlobalOnAddNoteListener(OnAddNoteListener listener){
         this.globalOnAddNoteListener = listener;
-        for (CategoryFragment cf : fragments){
+        for (CategoryFragmentHolderImpl cf : fragments){
             cf.setOnAddNoteListener(listener);
         }
     }

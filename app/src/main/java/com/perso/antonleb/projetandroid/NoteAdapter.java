@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.perso.antonleb.projetandroid.holders.CategoryFragmentHolder;
+import com.perso.antonleb.projetandroid.holders.NotesHolder;
+
 import java.util.List;
 
 /**
@@ -18,7 +21,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
     public List<INote> notes;
 
-    private CategoryFragment inWithin = null;
+    private CategoryFragmentHolder inWithin = null;
 
     private static String urlPrefix = "https://www.google.com/search?q=";
 
@@ -34,7 +37,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         }
     }
 
-    public NoteAdapter(CategoryFragment inWithin, List<INote> objects) {
+    public NoteAdapter(CategoryFragmentHolder inWithin, List<INote> objects) {
         this.inWithin = inWithin;
         notes = objects;
     }
