@@ -101,8 +101,12 @@ public class DialogNote extends android.support.v4.app.DialogFragment {
         public void run() {
             noteName.setFocusableInTouchMode(true);
             noteName.requestFocus();
-            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(noteName, 0);
+            if (getDialog() != null) {
+                if (getDialog().getWindow() != null) {
+                    getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(noteName, 0);
+                }
+            }
         }
     }
 }

@@ -84,8 +84,12 @@ public class DialogCategory extends android.support.v4.app.DialogFragment {
         public void run() {
             categoryName.setFocusableInTouchMode(true);
             categoryName.requestFocus();
-            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(categoryName, 0);
+            if (getDialog() != null) {
+                if (getDialog().getWindow() != null) {
+                    getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(categoryName, 0);
+                }
+            }
         }
     }
 }

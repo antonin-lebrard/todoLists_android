@@ -63,7 +63,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         holder.mDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inWithin.deleteNote(holder.getAdapterPosition());
+                int pos = holder.getAdapterPosition();
+                if (pos > -1)
+                    inWithin.deleteNote(pos);
             }
         });
     }
