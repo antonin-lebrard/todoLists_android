@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -48,7 +49,7 @@ public class Category implements ICategory
     {
         this.owner = owner.getKey();
         this.name = name;
-        this.notes = new HashSet<>();
+        this.notes = new LinkedHashSet<>();
     }
 
     /**
@@ -62,7 +63,7 @@ public class Category implements ICategory
     {
         this.owner = owner.getKey();
         this.name = name;
-        this.notes = new HashSet<>();
+        this.notes = new LinkedHashSet<>();
 
         for(String note : notes) {
             this.notes.add(note);
@@ -80,7 +81,7 @@ public class Category implements ICategory
     {
         this.owner = owner.getKey();
         this.name = name;
-        this.notes = new HashSet<>();
+        this.notes = new LinkedHashSet<>();
 
         for(String note : notes) {
             this.notes.add(note);
@@ -98,7 +99,7 @@ public class Category implements ICategory
 
         this.name = parcel.readString();
         this.owner = UserKey.CREATOR.createFromParcel(parcel);
-        this.notes = new HashSet<>();
+        this.notes = new LinkedHashSet<>();
 
         final int notesSize = parcel.readInt();
         String[] notes = new String[notesSize];
