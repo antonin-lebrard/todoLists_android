@@ -48,7 +48,7 @@ public class ConnectActivity extends AppCompatActivity {
                         || (actionId == EditorInfo.IME_ACTION_SEND)) {
 
                     if (username.getText().toString().equals("")){
-                        Snackbar snackbar = Snackbar.make(snackbarLayout, "The username cannot be empty", Snackbar.LENGTH_SHORT);
+                        Snackbar snackbar = Snackbar.make(snackbarLayout, R.string.error_username_empty, Snackbar.LENGTH_SHORT);
                         snackbar.show();
                     } else {
                         toMain(username.getText().toString());
@@ -62,7 +62,7 @@ public class ConnectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (username.getText().toString().equals("")){
-                    Snackbar snackbar = Snackbar.make(snackbarLayout, "The username cannot be empty", Snackbar.LENGTH_SHORT);
+                    Snackbar snackbar = Snackbar.make(snackbarLayout, R.string.error_username_empty, Snackbar.LENGTH_SHORT);
                     snackbar.show();
                 } else {
                     toMain(username.getText().toString());

@@ -6,6 +6,7 @@
     <string name="error_no_categories">There\'s no Categories for now, Add one!</string>
     <string name="error_user_not_logon">Error, user not log in</string>
     <string name="error_user_not_reachable">Error, user not reachable</string>
+    <string name="error_username_empty">The username cannot be empty</string>
     <string name="action_add_category">Add a Category</string>
     <string name="action_settings">Settings</string>
     <string name="hint_add_category">Category Name</string>

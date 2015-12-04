@@ -7,6 +7,7 @@
     <string name="error_no_categories">Il n\'y a pas de Categories présentes, ajoutez-en une!</string>
     <string name="error_user_not_logon">Erreur, utilisateur non connecté</string>
     <string name="error_user_not_reachable">Erreur, utilsateur non ateignable (Problème de réseau, Bug, …)</string>
+    <string name="error_username_empty">Le username ne peut pas être vide</string>
     <string name="action_add_category">Ajouter une Categorie</string>
     <string name="action_settings">Réglages</string>
     <string name="hint_add_category">Nom de la Categorie</string>
