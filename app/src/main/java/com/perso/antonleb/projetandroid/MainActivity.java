@@ -115,14 +115,14 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
             mSectionsPagerAdapter.setGlobalOnAddNoteListener(new OnAddNoteListener() {
                 @Override
                 public void onAddNote(ICategory category, String note) {
-                    Log.d("Add Listener", "Category : " + category.getName() + " Note : " + note);
+                    Log.d("Add Action", "User: " + category.getOwner().name + "Category: " + category.getName() + " Note: " + note);
                     /// TODO : Code to insert note on server via noteServiceConnection
                 }
             });
             mSectionsPagerAdapter.setGlobalOnDeleteNoteListener(new OnDeleteNoteListener() {
                 @Override
                 public void onDeleteNote(ICategory category, String note) {
-                    Log.d("Delete Listener", "Category : " + category.getName() + " Note : " + note);
+                    Log.d("Delete Action", "User: " + category.getOwner().name + "Category: " + category.getName() + " Note: " + note);
                     /// TODO : Code to delete note on server via noteServiceConnection
                 }
             });
