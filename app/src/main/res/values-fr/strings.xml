@@ -14,4 +14,6 @@
     <string name="hint_username_connect">Username</string>
     <string name="connect">Se Connecter</string>
     <string name="content_description_add_note">Ajouter une Note</string>
+    <string name="offline_mode">Mode offline</string>
+    <string name="online_mode">Mode online</string>
 </resources>

@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import com.perso.antonleb.projetandroid.MainActivity;
 import com.perso.antonleb.projetandroid.R;
+import com.perso.antonleb.projetandroid.datas.CategoryKey;
+import com.perso.antonleb.projetandroid.datas.UserKey;
 import com.perso.antonleb.projetandroid.listeners.CategoryValidationListener;
 
 /**
@@ -74,6 +76,15 @@ public class DialogCategory extends android.support.v4.app.DialogFragment {
             @Override
             public void onCategoryValidation(String categoryName) {
                 ((MainActivity)getActivity()).mSectionsPagerAdapter.addCategory(categoryName, true);
+                ((MainActivity)getActivity()).noteServiceConnection
+                        .getService()
+                        .addCategory(
+                                new CategoryKey(
+                                        categoryName,
+                                        new UserKey(((MainActivity)getActivity()).username)
+                                ),
+                                null
+                        );
             }
         };
         super.onAttach(activity);

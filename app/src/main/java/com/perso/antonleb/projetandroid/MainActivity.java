@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -22,39 +23,49 @@ import com.perso.antonleb.projetandroid.datas.ICategory;
 import com.perso.antonleb.projetandroid.datas.IUser;
 import com.perso.antonleb.projetandroid.datas.UserKey;
 import com.perso.antonleb.projetandroid.holders.CategoriesViewHolderImpl;
+import com.perso.antonleb.projetandroid.listeners.NetworkStateListener;
 import com.perso.antonleb.projetandroid.listeners.OnAddNoteListener;
 import com.perso.antonleb.projetandroid.listeners.OnDeleteNoteListener;
-import com.perso.antonleb.projetandroid.services.INoteConsumer;
-import com.perso.antonleb.projetandroid.services.NoteService;
-import com.perso.antonleb.projetandroid.services.SimpleNoteServiceConnection;
+import com.perso.antonleb.projetandroid.listeners.UserLoadingListener;
+import com.perso.antonleb.projetandroid.receiver.NetworkStateReceiver;
+import com.perso.antonleb.projetandroid.services.NoteDBService;
+import com.perso.antonleb.projetandroid.services.NoteDBServiceBinder;
+import com.perso.antonleb.projetandroid.services.NoteDBServiceConnection;
+import com.perso.antonleb.projetandroid.services.ServiceConnectionListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class MainActivity extends AppCompatConsumerActivity implements INoteConsumer
+public class MainActivity extends AppCompatActivity implements UserLoadingListener, NetworkStateListener
 {
     public SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager viewPager;
     private ImageButton addNote;
     private CoordinatorLayout snackbarCoordinator;
+    private NetworkStateReceiver stateReceiver;
 
-    private String username;
+    public String username;
 
     private boolean isUserLoaded = false;
 
-    protected SimpleNoteServiceConnection noteServiceConnection;
+    public NoteDBServiceConnection noteServiceConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         username = getIntent().getExtras().getString(ConnectActivity.ARG_CONNECT_USERNAME);
+        final UserLoadingListener userLoadingListener = this;
 
-        // Service creation and binding
-        noteServiceConnection = new SimpleNoteServiceConnection(this);
-        Intent intent = new Intent(this, NoteService.class);
-        bindService(intent, noteServiceConnection, BIND_AUTO_CREATE);
+        // Service creation and binding (penser aux lambdas ???)
+        noteServiceConnection = NoteDBServiceConnection.connect(this);
+        noteServiceConnection.then(new ServiceConnectionListener<NoteDBServiceBinder>() {
+            @Override
+            public void onServiceConnected(NoteDBServiceBinder binded) {
+                binded.loadUser(new UserKey(username), userLoadingListener);
+            }
+        });
 
         setContentView(R.layout.activity_main);
 
@@ -84,56 +95,64 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
                 }
             }
         });
-    }
 
-    @Override
-    public void onBinderCreated() {
-        noteServiceConnection.getService().loadUser(new UserKey(username));
+        stateReceiver = NetworkStateReceiver.createFor(this, this);
     }
 
     @Override
     public void onUserLoaded(IUser user) {
-        if(user == null){
-            Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.error_user_not_reachable, Snackbar.LENGTH_SHORT);
-            snackbar.show();
+        Log.i(getClass().getCanonicalName(), "LOADED " + user + "... ");
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), viewPager, findViewById(R.id.text_placeholder_empty_fragment), user.getName());
+        viewPager.setAdapter(mSectionsPagerAdapter);
+
+        Iterator<ICategory> iterator = user.categoriesIterator();
+        ArrayList<ICategory> categories = new ArrayList<>();
+
+        while (iterator.hasNext()){
+            categories.add(iterator.next());
         }
-        else {
-            Log.i(getClass().getCanonicalName(), "LOADED " + user + "... ");
-
-            mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), viewPager, findViewById(R.id.text_placeholder_empty_fragment), user.getName());
-            viewPager.setAdapter(mSectionsPagerAdapter);
-
-            Iterator<ICategory> iterator = user.categoriesIterator();
-            ArrayList<ICategory> categories = new ArrayList<>();
-            while (iterator.hasNext()){
-                categories.add(iterator.next());
-            }
-            for (ICategory c : categories) {
-                mSectionsPagerAdapter.addCategory(c.getName(), c);
-            }
-
-            mSectionsPagerAdapter.setGlobalOnAddNoteListener(new OnAddNoteListener() {
-                @Override
-                public void onAddNote(ICategory category, String note) {
-                    Log.d("Add Action", "User: " + category.getOwner().name + " Category: " + category.getName() + " Note: " + note);
-                    /// TODO : Code to insert note on server via noteServiceConnection
-                }
-            });
-            mSectionsPagerAdapter.setGlobalOnDeleteNoteListener(new OnDeleteNoteListener() {
-                @Override
-                public void onDeleteNote(ICategory category, String note) {
-                    Log.d("Delete Action", "User: " + category.getOwner().name + " Category: " + category.getName() + " Note: " + note);
-                    /// TODO : Code to delete note on server via noteServiceConnection
-                }
-            });
-            isUserLoaded = true;
+        for (ICategory c : categories) {
+            mSectionsPagerAdapter.addCategory(c.getName(), c);
         }
+
+        mSectionsPagerAdapter.setGlobalOnAddNoteListener(new OnAddNoteListener() {
+            @Override
+            public void onAddNote(ICategory category, String note) {
+                Log.d("Add Action", "User: " + category.getOwner().name + " Category: " + category.getName() + " Note: " + note);
+                noteServiceConnection.getService().addNote(category.getCategoryKey(), note, null);
+            }
+        });
+
+        mSectionsPagerAdapter.setGlobalOnDeleteNoteListener(new OnDeleteNoteListener() {
+            @Override
+            public void onDeleteNote(ICategory category, String note) {
+                Log.d("Delete Action", "User: " + category.getOwner().name + " Category: " + category.getName() + " Note: " + note);
+                noteServiceConnection.getService().removeNote(category.getCategoryKey(), note, null);
+            }
+        });
+
+        isUserLoaded = true;
+    }
+
+    @Override
+    public void onUserLoadingFail(UserKey key)
+    {
+        Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.error_user_not_reachable, Snackbar.LENGTH_SHORT);
+        snackbar.show();
+    }
+
+    @Override
+    public void onUserLoadingSuccess(UserKey key)
+    {
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(noteServiceConnection);
+        unregisterReceiver(stateReceiver);
     }
 
     @Override
@@ -158,6 +177,18 @@ public class MainActivity extends AppCompatConsumerActivity implements INoteCons
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onEnteringOnlineMode() {
+        Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.online_mode, Snackbar.LENGTH_SHORT);
+        snackbar.show();
+    }
+
+    @Override
+    public void onEnteringOfflineMode() {
+        Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.offline_mode, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 
     public class SectionsPagerAdapter extends CategoriesViewHolderImpl {

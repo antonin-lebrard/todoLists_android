@@ -3,24 +3,34 @@ package com.perso.antonleb.projetandroid.server;
 import com.perso.antonleb.projetandroid.datas.CategoryKey;
 import com.perso.antonleb.projetandroid.datas.ICategory;
 import com.perso.antonleb.projetandroid.datas.IUser;
-import com.perso.antonleb.projetandroid.exceptions.ServerRequestException;
+import com.perso.antonleb.projetandroid.datas.UserKey;
+import com.perso.antonleb.projetandroid.exceptions.DBRequestException;
 
 /**
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>
  *
  * Serveur permettant d'échanger des données avec l'application.
  */
-public interface INoteServerClient
+public interface INoteDBClient
 {
     /**
      * Retourne un utilisateur récupéré sur le serveur.
      * Créée l'utilisateur s'il n'existe pas.
      *
-     * @param identifier Nom de l'utilisateur, unique.
+     * @param key Clef permettant d'identifier l'utilisateur.
      *
      * @return L'utilisateur chargé.
      */
-    public IUser getUser(String identifier) throws ServerRequestException;
+    public IUser getUser(UserKey key) throws DBRequestException;
+
+    /**
+     * Change complètement l'état d'un utilisateur.
+     *
+     * @param user
+     *
+     * @throws DBRequestException
+     */
+    public void setUser(IUser user) throws DBRequestException;
 
     /**
      * Ajoute une note dans une catégorie.
@@ -28,7 +38,7 @@ public interface INoteServerClient
      * @param categoryKey Identifiant de la catégorie.
      * @param note Note à ajouter.
      */
-    public void addNote(CategoryKey categoryKey, String note) throws ServerRequestException;
+    public void addNote(CategoryKey categoryKey, String note) throws DBRequestException;
 
     /**
      * Supprime une note d'une catégorie.
@@ -36,20 +46,24 @@ public interface INoteServerClient
      * @param categoryKey Identifiant de la catégorie.
      * @param note Note à supprimer.
      */
-    public void removeNote(CategoryKey categoryKey, String note) throws ServerRequestException;
+    public void removeNote(CategoryKey categoryKey, String note) throws DBRequestException;
 
     /**
      * Supprime une catégorie complète du serveur.
      *
      * @param category Catégorie à supprimer.
      */
-    public void removeCategory(ICategory category) throws ServerRequestException;
+    public void removeCategory(ICategory category) throws DBRequestException;
 
     /**
-     * Récupère ou créée une catégorie depuis le serveur.
+     * Créer une nouvelle catégorie
      *
-     * @param key Identifiant de la catégorie.
-     * @return Catégorie récupérée / créée.
+     * @param key Catégorie à créer.
      */
-    public ICategory getCategory(CategoryKey key) throws ServerRequestException;
+    public void createCategory(CategoryKey key) throws DBRequestException;
+
+    /**
+     * Ferme le client.
+     */
+    public void close() throws DBRequestException;
 }

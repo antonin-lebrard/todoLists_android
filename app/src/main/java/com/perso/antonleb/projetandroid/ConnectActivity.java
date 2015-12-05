@@ -14,17 +14,28 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.perso.antonleb.projetandroid.listeners.NetworkStateListener;
+import com.perso.antonleb.projetandroid.receiver.NetworkStateReceiver;
+
 /**
  * Created by antonleb on 26/11/2015.
  */
-public class ConnectActivity extends AppCompatActivity {
+public class ConnectActivity extends AppCompatActivity implements NetworkStateListener {
 
     public static String ARG_CONNECT_USERNAME = "username";
 
     private static String SHARED_PREFERENCES = "com.perso.antonleb.projetandroid.ConnectActivity";
     private static String ARG_SHARED_CONNECT_USERNAME = "username_login";
 
+    private NetworkStateReceiver networkStateReceiver;
+
     private EditText username;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(this.networkStateReceiver);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +72,7 @@ public class ConnectActivity extends AppCompatActivity {
         connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (username.getText().toString().equals("")){
+                if (username.getText().toString().equals("")) {
                     Snackbar snackbar = Snackbar.make(snackbarLayout, R.string.error_username_empty, Snackbar.LENGTH_SHORT);
                     snackbar.show();
                 } else {
@@ -69,6 +80,8 @@ public class ConnectActivity extends AppCompatActivity {
                 }
             }
         });
+
+        networkStateReceiver = NetworkStateReceiver.createFor(this, this);
     }
 
     private void toMain(String username){
@@ -81,4 +94,17 @@ public class ConnectActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onEnteringOnlineMode() {
+        final CoordinatorLayout snackbarLayout = (CoordinatorLayout) findViewById(R.id.snackbar_connect_text);
+        Snackbar snackbar = Snackbar.make(snackbarLayout, R.string.online_mode, Snackbar.LENGTH_SHORT);
+        snackbar.show();
+    }
+
+    @Override
+    public void onEnteringOfflineMode() {
+        final CoordinatorLayout snackbarLayout = (CoordinatorLayout) findViewById(R.id.snackbar_connect_text);
+        Snackbar snackbar = Snackbar.make(snackbarLayout, R.string.offline_mode, Snackbar.LENGTH_SHORT);
+        snackbar.show();
+    }
 }

@@ -1,65 +1,87 @@
 package com.perso.antonleb.projetandroid.async;
 
-import com.perso.antonleb.projetandroid.consumable.ConsumableAsynTask;
+import android.os.AsyncTask;
+import android.util.Log;
+
 import com.perso.antonleb.projetandroid.datas.IUser;
 import com.perso.antonleb.projetandroid.datas.UserKey;
-import com.perso.antonleb.projetandroid.exceptions.ServerRequestException;
-import com.perso.antonleb.projetandroid.server.INoteServerClient;
-import com.perso.antonleb.projetandroid.services.INoteConsumer;
+import com.perso.antonleb.projetandroid.exceptions.DBRequestException;
+import com.perso.antonleb.projetandroid.listeners.UserLoadingListener;
+import com.perso.antonleb.projetandroid.server.INoteDBClient;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>
+ *
+ * Charge des utilisateurs.
  */
-public class LoadUserTask extends ConsumableAsynTask<UserKey, IUser, Collection<IUser>, INoteConsumer>
+public class LoadUserTask extends AsyncTask<UserKey, ActionProgress<UserKey>, Collection<IUser>>
 {
-    protected final INoteServerClient client;
+    protected final INoteDBClient client;
+    protected final List<UserLoadingListener> listeners;
 
-    public LoadUserTask(INoteServerClient client)
+    public LoadUserTask(INoteDBClient client, UserLoadingListener ... listener)
     {
         super();
         this.client = client;
+        this.listeners = new ArrayList<>(Arrays.asList(listener));
     }
 
     @Override
     protected Collection<IUser> doInBackground(UserKey... params) {
-        Collection<IUser> users = new LinkedList<IUser>();
+        Collection<IUser> users = new LinkedList<>();
 
         for(UserKey key : params) {
+            ActionProgress<UserKey> result;
             try {
-                IUser loaded = client.getUser(key.name);
+                IUser loaded = client.getUser(key);
                 users.add(loaded);
-                this.publishProgress(loaded);
-            } catch (ServerRequestException e) {
+                result = new ActionProgress<UserKey>(key, ActionResult.SUCCESS);
+            } catch (DBRequestException e) {
                 e.printStackTrace();
-                users.add(null);
-                this.publishProgress(null);
+                result = new ActionProgress<UserKey>(key, ActionResult.FAIL);
             }
+            this.publishProgress(result);
         }
 
         return users;
     }
 
     @Override
-    protected void onProgressUpdate(IUser... values)
+    protected void onProgressUpdate(ActionProgress<UserKey>... values)
     {
         if(values != null) {
-            for (IUser user : values) {
-                for (INoteConsumer consumer : this.consumers) {
-                    consumer.onUserLoaded(user);
+            for (ActionProgress<UserKey> progress : values) {
+                for(UserLoadingListener listener : this.listeners) {
+                    if(listener != null) {
+                        switch (progress.result) {
+                            case FAIL:
+                                listener.onUserLoadingFail(progress.data);
+                                break;
+                            case SUCCESS:
+                                listener.onUserLoadingSuccess(progress.data);
+                                break;
+                        }
+                    }
                 }
-            }
-        }
-        else {
-            for (INoteConsumer consumer : this.consumers) {
-                consumer.onUserLoaded(null);
             }
         }
     }
 
     @Override
-    protected void onPostExecute(Collection<IUser> iUsers)
-    { }
+    protected void onPostExecute(Collection<IUser> users)
+    {
+        for(IUser user : users) {
+            for(UserLoadingListener listener : this.listeners) {
+                if(listener != null) {
+                    listener.onUserLoaded(user);
+                }
+            }
+        }
+    }
 }

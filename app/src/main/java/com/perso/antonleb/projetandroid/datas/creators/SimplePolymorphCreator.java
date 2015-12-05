@@ -2,6 +2,7 @@ package com.perso.antonleb.projetandroid.datas.creators;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;

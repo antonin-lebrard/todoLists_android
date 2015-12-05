@@ -17,7 +17,8 @@ import com.perso.antonleb.projetandroid.datas.CategoryKey;
 import com.perso.antonleb.projetandroid.datas.ICategory;
 import com.perso.antonleb.projetandroid.datas.IUser;
 import com.perso.antonleb.projetandroid.datas.User;
-import com.perso.antonleb.projetandroid.exceptions.ServerRequestException;
+import com.perso.antonleb.projetandroid.datas.UserKey;
+import com.perso.antonleb.projetandroid.exceptions.DBRequestException;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -29,8 +30,10 @@ import java.util.Map;
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>
  *
  * Un client vers un serveur qui respecte les standards d'Antonin.
+ * Pas toujours accessible, plutôt grincheux et frustrant. Mais bon, bien plus fun que le local
+ * faut bien avouer.
  */
-public class AntoninServerClient implements INoteServerClient {
+public class AntoninServerDBClient implements INoteDBClient {
 
     protected final NetHttpTransport netHttpTransport;
     protected final HttpRequestFactory httpRequestFactory;
@@ -42,7 +45,7 @@ public class AntoninServerClient implements INoteServerClient {
     /**
      * Créer un nouveau client par défaut.
      */
-    public AntoninServerClient()
+    public AntoninServerDBClient()
     {
         this.netHttpTransport = new NetHttpTransport();
         this.httpRequestFactory = this.netHttpTransport.createRequestFactory();
@@ -56,7 +59,7 @@ public class AntoninServerClient implements INoteServerClient {
      *
      * @param serverLocation Url d'accès au serveur.
      */
-    public AntoninServerClient(String serverLocation)
+    public AntoninServerDBClient(String serverLocation)
     {
         this.netHttpTransport = new NetHttpTransport();
         this.httpRequestFactory = this.netHttpTransport.createRequestFactory();
@@ -122,12 +125,12 @@ public class AntoninServerClient implements INoteServerClient {
     }
 
     @Override
-    public IUser getUser(String identifier) throws ServerRequestException
+    public IUser getUser(UserKey key) throws DBRequestException
     {
-        User user = new User(identifier);
+        User user = new User(key.name);
 
         try {
-            HttpRequest request = this.makeGetAllRequest(identifier);
+            HttpRequest request = this.makeGetAllRequest(key.name);
             Map<String, List<String>> result = this.doRequest(request);
 
             if(result != null) {
@@ -137,36 +140,46 @@ public class AntoninServerClient implements INoteServerClient {
                 }
             }
             else {
-                Log.i(getClass().getCanonicalName(), "ERROR /getAll FOR USER <" + identifier + ">");
+                Log.i(getClass().getCanonicalName(), "ERROR /getAll FOR USER <" + key + ">");
                 user = null;
             }
         } catch (IOException e) {
-            throw new ServerRequestException(e);
+            throw new DBRequestException(e);
         }
 
         return user;
     }
 
     @Override
-    public void addNote(CategoryKey categoryKey, String note) throws ServerRequestException
+    public void setUser(IUser user) throws DBRequestException {
+
+    }
+
+    @Override
+    public void addNote(CategoryKey categoryKey, String note) throws DBRequestException
     {
 
     }
 
     @Override
-    public void removeNote(CategoryKey categoryKey, String note) throws ServerRequestException
+    public void removeNote(CategoryKey categoryKey, String note) throws DBRequestException
     {
 
     }
 
     @Override
-    public void removeCategory(ICategory category) throws ServerRequestException
+    public void removeCategory(ICategory category) throws DBRequestException
     {
 
     }
 
     @Override
-    public ICategory getCategory(CategoryKey key) {
-        return null;
+    public void createCategory(CategoryKey key) throws DBRequestException {
+
+    }
+
+    @Override
+    public void close() {
+
     }
 }
