@@ -113,7 +113,8 @@ public final class CategoryKey implements Parcelable
         if(category == null) this.set(null, null);
         else {
             this.categoryName = category.getName();
-            this.owner.set(category.getOwner());
+            if(this.owner == null) this.owner = category.getOwner();
+            else this.owner.set(category.getOwner());
         }
     }
 
