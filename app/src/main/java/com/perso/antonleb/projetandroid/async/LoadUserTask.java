@@ -20,36 +20,35 @@ import java.util.List;
  *
  * Charge des utilisateurs.
  */
-public class LoadUserTask extends AsyncTask<UserKey, ActionProgress<UserKey>, Collection<IUser>>
+public class LoadUserTask extends AsyncTask<Void, ActionProgress<UserKey>, IUser>
 {
-    protected final INoteDBClient client;
+    protected INoteDBClient client;
     protected final List<UserLoadingListener> listeners;
+    protected final UserKey key;
 
-    public LoadUserTask(INoteDBClient client, UserLoadingListener ... listener)
+    public LoadUserTask(INoteDBClient client, UserKey key, UserLoadingListener ... listener)
     {
         super();
         this.client = client;
         this.listeners = new ArrayList<>(Arrays.asList(listener));
+        this.key = key;
     }
 
     @Override
-    protected Collection<IUser> doInBackground(UserKey... params) {
-        Collection<IUser> users = new LinkedList<>();
+    protected IUser doInBackground(Void... params) {
+        IUser user = null;
 
-        for(UserKey key : params) {
-            ActionProgress<UserKey> result;
-            try {
-                IUser loaded = client.getUser(key);
-                users.add(loaded);
-                result = new ActionProgress<UserKey>(key, ActionResult.SUCCESS);
-            } catch (DBRequestException e) {
-                e.printStackTrace();
-                result = new ActionProgress<UserKey>(key, ActionResult.FAIL);
-            }
-            this.publishProgress(result);
+        ActionProgress<UserKey> result;
+        try {
+            user = client.getUser(key);
+            result = new ActionProgress<UserKey>(key, ActionResult.SUCCESS);
+        } catch (DBRequestException e) {
+            e.printStackTrace();
+            result = new ActionProgress<UserKey>(key, ActionResult.FAIL);
         }
+        this.publishProgress(result);
 
-        return users;
+        return user;
     }
 
     @Override
@@ -74,14 +73,20 @@ public class LoadUserTask extends AsyncTask<UserKey, ActionProgress<UserKey>, Co
     }
 
     @Override
-    protected void onPostExecute(Collection<IUser> users)
+    protected void onPostExecute(IUser user)
     {
-        for(IUser user : users) {
-            for(UserLoadingListener listener : this.listeners) {
-                if(listener != null) {
-                    listener.onUserLoaded(user);
-                }
+        for(UserLoadingListener listener : this.listeners) {
+            if(listener != null) {
+                listener.onUserLoaded(user);
             }
         }
+    }
+
+    public INoteDBClient getClient() {
+        return client;
+    }
+
+    public void setClient(INoteDBClient client) {
+        this.client = client;
     }
 }

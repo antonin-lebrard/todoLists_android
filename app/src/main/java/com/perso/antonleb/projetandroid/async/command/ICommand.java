@@ -8,4 +8,6 @@ import com.perso.antonleb.projetandroid.exceptions.CommandExecutionException;
  * @author Cédric DEMONGIVERT <cedric.demongivert@gmail.com>
  */
 public interface ICommand extends Parcelable
-{ }
+{
+
+}

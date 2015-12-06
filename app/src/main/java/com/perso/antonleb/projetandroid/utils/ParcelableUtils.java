@@ -1,10 +1,18 @@
 package com.perso.antonleb.projetandroid.utils;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.perso.antonleb.projetandroid.datas.creators.SimplePolymorphCreator;
+import com.perso.antonleb.projetandroid.exceptions.DBRequestException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.LinkedList;
 
 /**
@@ -44,6 +52,48 @@ public final class ParcelableUtils
     }
 
     /**
+     * Transforme un fichier en parcel.
+     *
+     * @param file
+     *
+     * @return
+     */
+    public static Parcel toParcel(Context context, File file) throws IOException {
+        InputStream in = null;
+
+        in = context.openFileInput(file.getName());
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+        int next = 0;
+        while((next = in.read()) >= 0) {
+            bytes.write(next);
+        }
+
+        in.close();
+        Parcel parcel = Parcel.obtain();
+        parcel.unmarshall(bytes.toByteArray(), 0, bytes.size());
+        parcel.setDataPosition(0);
+        return parcel;
+    }
+
+    /**
+     * Transforme un parcel en fichier.
+     *
+     * @param file
+     */
+    public static void toFile(Context context, Parcel parcel, File file) throws IOException {
+        OutputStream output = context.openFileOutput(file.getName(), context.MODE_PRIVATE);
+
+        Log.i(ParcelableUtils.class.getCanonicalName(), "SIZE TO WRITE " + parcel.dataSize());
+        byte[] bytes = parcel.marshall();
+        Log.i(ParcelableUtils.class.getCanonicalName(), "MARSHALLED");
+        output.write(bytes);
+        output.flush();
+        output.close();
+        Log.i(ParcelableUtils.class.getCanonicalName(), "WRITED");
+    }
+
+    /**
      * Ecrit une suite d'objets parcelables dans un objet Parcel.
      *
      * @param parcel
@@ -53,7 +103,10 @@ public final class ParcelableUtils
     public static void writeArray(Parcel parcel, int flags, Parcelable[] objects)
     {
         parcel.writeInt(objects.length);
-        for(Parcelable object : objects) object.writeToParcel(parcel, flags);
+        for(Parcelable object : objects) {
+            Log.i(ParcelableUtils.class.getCanonicalName(), "WRITING " + object);
+            object.writeToParcel(parcel, flags);
+        }
     }
 
     /**

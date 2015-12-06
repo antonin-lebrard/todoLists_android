@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
             @Override
             public void onAddNote(ICategory category, String note) {
                 Log.d("Add Action", "User: " + category.getOwner().name + " Category: " + category.getName() + " Note: " + note);
-                noteServiceConnection.getService().addNote(category.getCategoryKey(), note, null);
+                noteServiceConnection.getService().addNote(category.getCategoryKey(), note);
             }
         });
 
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
             @Override
             public void onDeleteNote(ICategory category, String note) {
                 Log.d("Delete Action", "User: " + category.getOwner().name + " Category: " + category.getName() + " Note: " + note);
-                noteServiceConnection.getService().removeNote(category.getCategoryKey(), note, null);
+                noteServiceConnection.getService().removeNote(category.getCategoryKey(), note);
             }
         });
 

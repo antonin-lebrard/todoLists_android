@@ -14,6 +14,11 @@ import com.perso.antonleb.projetandroid.exceptions.DBRequestException;
 public interface INoteDBClient
 {
     /**
+     * Ouvre le client.
+     */
+    public void open() throws DBRequestException;
+
+    /**
      * Retourne un utilisateur récupéré sur le serveur.
      * Créée l'utilisateur s'il n'existe pas.
      *
@@ -47,13 +52,6 @@ public interface INoteDBClient
      * @param note Note à supprimer.
      */
     public void removeNote(CategoryKey categoryKey, String note) throws DBRequestException;
-
-    /**
-     * Supprime une catégorie complète du serveur.
-     *
-     * @param category Catégorie à supprimer.
-     */
-    public void removeCategory(ICategory category) throws DBRequestException;
 
     /**
      * Créer une nouvelle catégorie

@@ -13,10 +13,12 @@ import com.perso.antonleb.projetandroid.datas.User;
 import com.perso.antonleb.projetandroid.datas.UserKey;
 import com.perso.antonleb.projetandroid.datas.creators.SimplePolymorphCreator;
 import com.perso.antonleb.projetandroid.exceptions.DBRequestException;
+import com.perso.antonleb.projetandroid.utils.ParcelableUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -43,32 +45,9 @@ public class LocalDBClient implements INoteDBClient
         this.loadedUsers = new HashMap<>();
     }
 
-    /**
-     * Extrait le contenu d'un fichier dans un objet Parcel.
-     *
-     * @param file
-     *
-     * @return
-     */
-    protected Parcel toParcel(File file) throws DBRequestException {
-        InputStream in = null;
-        try {
-            in = this.context.openFileInput(file.getName());
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            Parcel parcel = Parcel.obtain();
+    @Override
+    public void open() throws DBRequestException {
 
-            int next = 0;
-            while((next = in.read()) >= 0) {
-                bytes.write(next);
-            }
-
-            in.close();
-            parcel.unmarshall(bytes.toByteArray(), 0, bytes.size());
-            parcel.setDataPosition(0);
-            return parcel;
-        }  catch (Exception e) {
-            throw new DBRequestException(e);
-        }
     }
 
     /**
@@ -91,8 +70,16 @@ public class LocalDBClient implements INoteDBClient
 
             if (userFile.exists()) {
                 SimplePolymorphCreator<IUser> userCreator = SimplePolymorphCreator.getCreator(IUser.class);
-                Parcel parcel = this.toParcel(userFile);
+                Parcel parcel = null;
+
+                try {
+                    parcel = ParcelableUtils.toParcel(this.context, userFile);
+                } catch (IOException e) {
+                    throw new DBRequestException(e);
+                }
+
                 loaded = userCreator.createFromParcel(parcel);
+                parcel.recycle();
             } else {
                 loaded = new User(key.name);
             }
@@ -152,10 +139,10 @@ public class LocalDBClient implements INoteDBClient
     /**
      * Supprime une catégorie d'un utilisateur.
      *
-     * @param category Catégorie à supprimer.
+     * @param key Catégorie à supprimer.
      * @throws DBRequestException
      */
-    @Override
+    /*@Override
     public void removeCategory(ICategory category) throws DBRequestException
     {
         if(!this.loadedUsers.containsKey(category.getOwner())){
@@ -163,7 +150,7 @@ public class LocalDBClient implements INoteDBClient
         }
 
         this.loadedUsers.get(category.getOwner()).destroyCategory(category.getName());
-    }
+    }*/
 
     @Override
     public void createCategory(CategoryKey key) throws DBRequestException {
@@ -189,14 +176,10 @@ public class LocalDBClient implements INoteDBClient
             this.loadedUsers.get(key).writeToParcel(parcel, 0);
 
             try {
-                OutputStream output = this.context.openFileOutput(userFile.getName(), context.MODE_PRIVATE);
-
-                byte[] bytes = parcel.marshall();
-
-                output.write(bytes);
-                output.flush();
-                output.close();
+                ParcelableUtils.toFile(this.context, parcel, userFile);
+                parcel.recycle();
             } catch (Exception e) {
+                parcel.recycle();
                 throw new DBRequestException(e);
             }
         }

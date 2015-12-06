@@ -1,5 +1,8 @@
 package com.perso.antonleb.projetandroid.server;
 
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Parcel;
 import android.util.Log;
 
 import com.google.api.client.http.GenericUrl;
@@ -12,14 +15,20 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.perso.antonleb.projetandroid.async.command.ICommandQueue;
+import com.perso.antonleb.projetandroid.async.command.ListCommandQueue;
 import com.perso.antonleb.projetandroid.datas.Category;
 import com.perso.antonleb.projetandroid.datas.CategoryKey;
 import com.perso.antonleb.projetandroid.datas.ICategory;
 import com.perso.antonleb.projetandroid.datas.IUser;
 import com.perso.antonleb.projetandroid.datas.User;
 import com.perso.antonleb.projetandroid.datas.UserKey;
+import com.perso.antonleb.projetandroid.datas.creators.SimplePolymorphCreator;
 import com.perso.antonleb.projetandroid.exceptions.DBRequestException;
+import com.perso.antonleb.projetandroid.receiver.NetworkStateReceiver;
+import com.perso.antonleb.projetandroid.utils.ParcelableUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -124,6 +133,24 @@ public class AntoninServerDBClient implements INoteDBClient {
         }
     }
 
+    /**
+     * Pas de retour.
+     *
+     * @param request
+     * @throws IOException
+     */
+    public void doAction(HttpRequest request) throws IOException
+    {
+        Log.i(getClass().getCanonicalName(), "EXECUTE REQUEST...");
+        HttpResponse response = request.execute();
+    }
+
+    @Override
+    public void open() throws DBRequestException
+    {
+
+    }
+
     @Override
     public IUser getUser(UserKey key) throws DBRequestException
     {
@@ -151,35 +178,89 @@ public class AntoninServerDBClient implements INoteDBClient {
     }
 
     @Override
-    public void setUser(IUser user) throws DBRequestException {
+    public void setUser(IUser user) throws DBRequestException
+    {
 
     }
 
     @Override
     public void addNote(CategoryKey categoryKey, String note) throws DBRequestException
     {
+        try {
+            HttpRequest request = this.makeAddNoteRequest(categoryKey, note);
+            this.doAction(request);
+        } catch (IOException e) {
+            throw new DBRequestException(e);
+        }
+    }
 
+    private HttpRequest makeAddNoteRequest(CategoryKey key, String note) throws IOException
+    {
+        Log.i(getClass().getCanonicalName(), "CREATING POST REQUEST ON /addToDo FOR NOTE <" + key + " : " + note + ">");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("list", key.categoryName);
+        params.put("user", key.owner.name);
+        params.put("name", note);
+
+        return this.httpRequestFactory.buildPostRequest(
+                this.getUrl("addToDo"),
+                new JsonHttpContent(this.jsonFactory, params)
+        );
+    }
+
+    private HttpRequest makeRemoveNoteRequest(CategoryKey key, String note) throws IOException
+    {
+        Log.i(getClass().getCanonicalName(), "CREATING POST REQUEST ON /removeToDo FOR NOTE <" + key + " : " + note + ">");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("list", key.categoryName);
+        params.put("user", key.owner.name);
+        params.put("name", note);
+
+        return this.httpRequestFactory.buildPostRequest(
+                this.getUrl("removeToDo"),
+                new JsonHttpContent(this.jsonFactory, params)
+        );
     }
 
     @Override
     public void removeNote(CategoryKey categoryKey, String note) throws DBRequestException
     {
-
+        try {
+            HttpRequest request = this.makeRemoveNoteRequest(categoryKey, note);
+            this.doAction(request);
+        } catch (IOException e) {
+            throw new DBRequestException(e);
+        }
     }
 
-    @Override
-    public void removeCategory(ICategory category) throws DBRequestException
+    protected HttpRequest makeCreateCategoryRequest(CategoryKey key) throws IOException
     {
+        Log.i(getClass().getCanonicalName(), "CREATING POST REQUEST ON /addType FOR CATEGORY <" + key + ">");
 
+        Map<String, String> params = new HashMap<>();
+        params.put("list", key.categoryName);
+
+        return this.httpRequestFactory.buildPostRequest(
+                this.getUrl("addType"),
+                new JsonHttpContent(this.jsonFactory, params)
+        );
     }
 
     @Override
-    public void createCategory(CategoryKey key) throws DBRequestException {
-
+    public void createCategory(CategoryKey key) throws DBRequestException
+    {
+        try {
+            HttpRequest request = this.makeCreateCategoryRequest(key);
+            this.doAction(request);
+        } catch (IOException e) {
+            throw new DBRequestException(e);
+        }
     }
 
     @Override
-    public void close() {
+    public void close() throws DBRequestException {
 
     }
 }

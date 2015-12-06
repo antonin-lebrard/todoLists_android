@@ -82,8 +82,7 @@ public class DialogCategory extends android.support.v4.app.DialogFragment {
                                 new CategoryKey(
                                         categoryName,
                                         new UserKey(((MainActivity)getActivity()).username)
-                                ),
-                                null
+                                )
                         );
             }
         };
