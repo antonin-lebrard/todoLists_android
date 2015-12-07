@@ -38,6 +38,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".HelpActivity"
+                  android:label="@string/layout_label"
+                  android:theme="@style/AppTheme.NoActionBar">
+        </activity>
 
     </application>
 

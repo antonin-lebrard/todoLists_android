@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">TODO Lists</string>
     <string name="layout_label">TODO Lists</string>
+    <string name="dialog_negative">Cancel</string>
+    <string name="dialog_positive">OK</string>
     <string name="placeholder_empty_fragment">Fill me with Categories</string>
     <string name="placeholder_empty_note">Fill me with some Notes</string>
     <string name="error_no_categories">There\'s no Categories for now, Add one!</string>
@@ -9,10 +11,47 @@
     <string name="error_username_empty">The username cannot be empty</string>
     <string name="action_add_category">Add a Category</string>
     <string name="action_settings">Settings</string>
+    <string name="action_help">Help and Comments</string>
     <string name="hint_add_category">Category Name</string>
     <string name="hint_username_connect">Username</string>
     <string name="offline_mode">Offline mode</string>
     <string name="online_mode">Online mode</string>
     <string name="connect">Connect</string>
     <string name="content_description_add_note">Add a Note</string>
+
+    <string name="help_first_title">What is this application, what is its main goal ?</string>
+    <string name="help_first_paragraph">
+        "This app is an helper to remind you of whatever you want to check out later.
+To help you do that, it let you add categories of things you want to be reminded of, and let you add notes in a simple manner.
+No labels, no dates, no check in button, no calendar integration, just you and your notes."
+    </string>
+    <string name="help_second_title">How to use it ?</string>
+    <string name="help_second_paragraph">
+        "All your notes are tied to the username you put at the launch of the app.
+You can add a category with the button at the top, for example : \"Series\".
+And you can add a note inside the category you\'re in, for example : \"The Wire\".
+With the Google button at left, you can launch in your favorite browser the google search of your note.
+And with the bin button at the right you delete your note."
+    </string>
+    <string name="help_third_title">Where my data are stored ?</string>
+    <string name="help_third_paragraph">
+        "All your notes are stored in local (in your smartphone) and online (in a server).
+Whenever there is a connection available, all the changes are given to the server.
+But if there isn\'t, all the changes are stored locally in your smartphone.
+The next time a connection is available, all the changes made in local are applied in the server."
+    </string>
+    <string name="help_fourth_title">How my data are used ? Is there any trick ? Are my notes watched ? Why isn\'t there a password ?</string>
+    <string name="help_fourth_paragraph">
+        "Nothing is stored online apart from your notes. Nothing is used on your smartphone, no ads, no identity check, nothing apart from your notes.
+And there is no password for two main reasons :
+- We guaranty no top security for the data stored in the server, and we\'re just small developers that cannot engage themselves on the security of our server.
+So if a password were to be asked, this is another source of potential loss of password for you, the user.
+And we don\'t want to be a potential security breach for you.
+- The notes should not be something critical in terms of personal information, the main reason this app was created is to have a simple manner to add some reminders."
+    </string>
+    <string name="help_fourth_important">
+If you consider as personal information, the notes you add in this application, we recommend you to not use this app.
+    </string>
+    <string name="help_sources">All the sources of this application are available here :</string>
+    <string name="help_sources_link">https://github.com/fandegw/todoLists_android</string>
 </resources>

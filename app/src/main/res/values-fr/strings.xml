@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">Listes TODO</string>
     <string name="layout_label">Listes TODO</string>
+    <string name="dialog_negative">Annuler</string>
+    <string name="dialog_positive">OK</string>
     <string name="placeholder_empty_fragment">Ajoutez moi des Categories</string>
     <string name="placeholder_empty_note">Remplissez-moi de Notes</string>
     <string name="error_no_categories">Il n\'y a pas de Categories présentes, ajoutez-en une!</string>
@@ -10,10 +12,48 @@
     <string name="error_username_empty">Le username ne peut pas être vide</string>
     <string name="action_add_category">Ajouter une Categorie</string>
     <string name="action_settings">Réglages</string>
+    <string name="action_help">Aide et Commentaires</string>
     <string name="hint_add_category">Nom de la Categorie</string>
     <string name="hint_username_connect">Username</string>
     <string name="connect">Se Connecter</string>
     <string name="content_description_add_note">Ajouter une Note</string>
     <string name="offline_mode">Mode offline</string>
     <string name="online_mode">Mode online</string>
+
+    <string name="help_first_title">Quelle est cette application, et quelle est son but ?</string>
+    <string name="help_first_paragraph">
+        "Cette application se veut être un moyen de retenir pour vous n\'importe quelles activités, loisirs, objets que vous voudriez faire plus tard.
+Pour vous aider, elle vous propose de créer des catégories, et des notes très aisément.
+Sans labels, sans dates, sans boutons ou cases à cocher, sans d\'integration calendrier, juste vous et vos notes."
+    </string>
+    <string name="help_second_title">Comment l\'utiliser ?</string>
+    <string name="help_second_paragraph">
+        "Toutes vos notes sont liées au nom d\'utilisateur que vous rentrez au lancement.
+Vous pouvez ajouter une catégorie avec le bouton en haut, par exemple : \"Séries\".
+Et vous pouvez ajouter une note dans la catégorie visonnée à l\'écran, par exemple : \"The Wire\".
+Avec le bouton Google à gauche, vous pouvez lancer dans votre navigateur favori la recherche Google de votre note.
+Et avec le bouton en forme de poubelle, vous pouvez la supprimer."
+    </string>
+    <string name="help_third_title">Où sont stockées mes données ?</string>
+    <string name="help_third_paragraph">
+        "Toutes vos notes sont stockées en local (dans votre smartphone) et en ligne (dans un serveur).
+Du moment qu\'une connexion internet est présente, tous les changements sont appliqués directement dans le serveur.
+Mais si vous êtes hors ligne, vos changements sont stockés localement.
+A la prochaine connexion à internet, tous les changements fait en local sont reproduits dans le serveur.
+A partir du moment où vous avez accédé à votre compte en mode en ligne au moins une fois, vous aurez accès à toutes les données déjà téléchargées."
+    </string>
+    <string name="help_fourth_title">Comment mes données sont-elles utilisées ? Y a t\'il un piège ? Est-ce que mes notes sont éspionnées? Pourquoi n\'y a t-il pas de Mot de passe ?</string>
+    <string name="help_fourth_paragraph">
+        "Rien n\'est stocké en ligne mise à part vos notes. Rien n\'est utilisé dans votre smartphone, pas de pub, pas d\'identité récupérée, rien si ce n\'est vos notes.
+Pour l\'absence de mot de passe, il y a deux raisons principales:
+- Nous ne garantissons pas une sécurité à toutes épreuves pour notre serveur, et nous, en tant que petite équipe de développeurs, nous ne pouvons pas nous engager à être au niveau des meilleurs entreprises en terme de sécurité de vos données.
+Par conséquent, si nous vous demandions un mot de passe, ce serait une nouvelle source potentielle de perte de votre mot de passe, pour vous, notre utilisateur.
+Et nous ne voulons pas représenter une nouvelle source de failles de sécurité pour des informations aussi sensibles que vos mots de passe.
+- De plus, vos notes ne devraient pas être des sources critiques d\'informations personnelles de votre part, la raison pour laquelle cette application a été créé, est de pouvoir ajouter simplement des petites notes à soit-même."
+    </string>
+    <string name="help_fourth_important">
+Si vous considerez vos notes comme des informations personnelles, nous vous recommandons de ne pas utiliser cette application.
+    </string>
+    <string name="help_sources">Toutes les sources de cette application sont disponibles ici :</string>
+    <string name="help_sources_link">https://github.com/fandegw/todoLists_android</string>
 </resources>

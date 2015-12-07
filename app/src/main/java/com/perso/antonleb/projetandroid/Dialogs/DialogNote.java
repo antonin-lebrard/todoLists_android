@@ -44,6 +44,7 @@ public class DialogNote extends android.support.v4.app.DialogFragment {
         String hintPrefix = getArguments().getString(ARG_HINT_PREFIX);
 
         hintPrefix = hintPrefix == null ? "Bug" : hintPrefix;
+        hintPrefix = hintPrefix.substring(0, 1).toUpperCase() + hintPrefix.substring(1, hintPrefix.length());
         String categoryName = hintPrefix;
 
         View root = getActivity().getLayoutInflater().inflate(R.layout.dialog_note, null);
@@ -68,8 +69,8 @@ public class DialogNote extends android.support.v4.app.DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Add a note to " + categoryName);
         builder.setView(root);
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {@Override public void onClick(DialogInterface dialog, int which) {}});
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.dialog_negative, new DialogInterface.OnClickListener() {@Override public void onClick(DialogInterface dialog, int which) {}});
+        builder.setPositiveButton(R.string.dialog_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 listener.onNoteValidation(noteName.getText().toString());

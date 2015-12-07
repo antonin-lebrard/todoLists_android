@@ -167,6 +167,9 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_help) {
+            Intent toHelp = new Intent(MainActivity.this, HelpActivity.class);
+            MainActivity.this.startActivity(toHelp);
         } else if (id == R.id.action_add_category) {
             if (isUserLoaded){
                 DialogFragment dialog = new DialogCategory();
