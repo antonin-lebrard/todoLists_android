@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.perso.antonleb.projetandroid.Dialogs.DialogCategory;
 import com.perso.antonleb.projetandroid.Dialogs.DialogNote;
@@ -42,12 +43,12 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
     public SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager viewPager;
     private ImageButton addNote;
-    private CoordinatorLayout snackbarCoordinator;
     private NetworkStateReceiver stateReceiver;
 
     public String username;
 
     private boolean isUserLoaded = false;
+    private Toast globalToast;
 
     public NoteDBServiceConnection noteServiceConnection;
 
@@ -69,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
 
         setContentView(R.layout.activity_main);
 
-        snackbarCoordinator = (CoordinatorLayout) findViewById(R.id.snackbar_main_text);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -83,15 +82,14 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
                 if (isUserLoaded) {
                     String categoryName = mSectionsPagerAdapter.getCurrentCategoryName();
                     if (categoryName == null){
-                        Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.error_no_categories, Snackbar.LENGTH_SHORT);
-                        snackbar.show();
+                        showToast(R.string.error_no_categories);
                     } else {
+                        if (globalToast != null) globalToast.cancel();
                         DialogFragment dialog = DialogNote.newInstance(categoryName);
                         dialog.show(getSupportFragmentManager(), "NoteDialog");
                     }
                 } else {
-                    Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.error_user_not_logon, Snackbar.LENGTH_SHORT);
-                    snackbar.show();
+                    showToast(R.string.error_user_not_logon);
                 }
             }
         });
@@ -138,8 +136,7 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
     @Override
     public void onUserLoadingFail(UserKey key)
     {
-        Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.error_user_not_reachable, Snackbar.LENGTH_SHORT);
-        snackbar.show();
+        showToast(R.string.error_user_not_reachable);
     }
 
     @Override
@@ -168,31 +165,32 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_help) {
+            if (globalToast != null) globalToast.cancel();
             Intent toHelp = new Intent(MainActivity.this, HelpActivity.class);
             MainActivity.this.startActivity(toHelp);
         } else if (id == R.id.action_add_category) {
             if (isUserLoaded){
+                if (globalToast != null) globalToast.cancel();
                 DialogFragment dialog = new DialogCategory();
                 dialog.show(getSupportFragmentManager(), "CategoryDialog");
             } else {
-                Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.error_user_not_reachable, Snackbar.LENGTH_SHORT);
-                snackbar.show();
+                showToast(R.string.error_user_not_reachable);
             }
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onEnteringOnlineMode() {
-        Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.online_mode, Snackbar.LENGTH_SHORT);
-        snackbar.show();
+    private void showToast(int resourceId){
+        if (globalToast != null) globalToast.cancel();
+        globalToast = Toast.makeText(getApplicationContext(), resourceId, Toast.LENGTH_SHORT);
+        globalToast.show();
     }
 
     @Override
-    public void onEnteringOfflineMode() {
-        Snackbar snackbar = Snackbar.make(snackbarCoordinator, R.string.offline_mode, Snackbar.LENGTH_SHORT);
-        snackbar.show();
-    }
+    public void onEnteringOnlineMode() {}
+
+    @Override
+    public void onEnteringOfflineMode() {}
 
     public class SectionsPagerAdapter extends CategoriesViewHolderImpl {
 

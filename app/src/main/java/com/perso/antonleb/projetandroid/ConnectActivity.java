@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.perso.antonleb.projetandroid.listeners.NetworkStateListener;
 import com.perso.antonleb.projetandroid.receiver.NetworkStateReceiver;
@@ -31,6 +32,8 @@ public class ConnectActivity extends AppCompatActivity implements NetworkStateLi
 
     private EditText username;
 
+    private Toast globalToast;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -41,7 +44,6 @@ public class ConnectActivity extends AppCompatActivity implements NetworkStateLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
-        final CoordinatorLayout snackbarLayout = (CoordinatorLayout) findViewById(R.id.snackbar_connect_text);
 
         SharedPreferences prefs = this.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
         String user_login = prefs.getString(ARG_SHARED_CONNECT_USERNAME, "");
@@ -59,8 +61,7 @@ public class ConnectActivity extends AppCompatActivity implements NetworkStateLi
                         || (actionId == EditorInfo.IME_ACTION_SEND)) {
 
                     if (username.getText().toString().equals("")){
-                        Snackbar snackbar = Snackbar.make(snackbarLayout, R.string.error_username_empty, Snackbar.LENGTH_SHORT);
-                        snackbar.show();
+                        showToast(R.string.error_username_empty);
                     } else {
                         toMain(username.getText().toString());
                     }
@@ -73,8 +74,7 @@ public class ConnectActivity extends AppCompatActivity implements NetworkStateLi
             @Override
             public void onClick(View v) {
                 if (username.getText().toString().equals("")) {
-                    Snackbar snackbar = Snackbar.make(snackbarLayout, R.string.error_username_empty, Snackbar.LENGTH_SHORT);
-                    snackbar.show();
+                    showToast(R.string.error_username_empty);
                 } else {
                     toMain(username.getText().toString());
                 }
@@ -85,6 +85,8 @@ public class ConnectActivity extends AppCompatActivity implements NetworkStateLi
     }
 
     private void toMain(String username){
+        if (globalToast != null) globalToast.cancel();
+
         SharedPreferences prefs = this.getSharedPreferences(ConnectActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         prefs.edit().putString(ConnectActivity.ARG_SHARED_CONNECT_USERNAME, username).apply();
 
@@ -93,18 +95,19 @@ public class ConnectActivity extends AppCompatActivity implements NetworkStateLi
         ConnectActivity.this.startActivity(toMain);
     }
 
+    private void showToast(int resourceId){
+        if (globalToast != null) globalToast.cancel();
+        globalToast = Toast.makeText(getApplicationContext(), resourceId, Toast.LENGTH_SHORT);
+        globalToast.show();
+    }
 
     @Override
     public void onEnteringOnlineMode() {
-        final CoordinatorLayout snackbarLayout = (CoordinatorLayout) findViewById(R.id.snackbar_connect_text);
-        Snackbar snackbar = Snackbar.make(snackbarLayout, R.string.online_mode, Snackbar.LENGTH_SHORT);
-        snackbar.show();
+        showToast(R.string.online_mode);
     }
 
     @Override
     public void onEnteringOfflineMode() {
-        final CoordinatorLayout snackbarLayout = (CoordinatorLayout) findViewById(R.id.snackbar_connect_text);
-        Snackbar snackbar = Snackbar.make(snackbarLayout, R.string.offline_mode, Snackbar.LENGTH_SHORT);
-        snackbar.show();
+        showToast(R.string.offline_mode);
     }
 }

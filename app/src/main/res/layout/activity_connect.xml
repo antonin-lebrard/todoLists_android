@@ -38,11 +38,4 @@
         android:layout_gravity="center_horizontal"
         style="?android:attr/borderlessButtonStyle"/>
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/snackbar_connect_text"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_gravity="bottom|center_horizontal|center_vertical">
-
-    </android.support.design.widget.CoordinatorLayout>
 </LinearLayout>

@@ -75,15 +75,17 @@ public class DialogCategory extends android.support.v4.app.DialogFragment {
         listener = new CategoryValidationListener() {
             @Override
             public void onCategoryValidation(String categoryName) {
-                ((MainActivity)getActivity()).mSectionsPagerAdapter.addCategory(categoryName, true);
-                ((MainActivity)getActivity()).noteServiceConnection
-                        .getService()
-                        .addCategory(
-                                new CategoryKey(
-                                        categoryName,
-                                        new UserKey(((MainActivity)getActivity()).username)
-                                )
-                        );
+                if (!categoryName.equals("")) {
+                    ((MainActivity) getActivity()).mSectionsPagerAdapter.addCategory(categoryName, true);
+                    ((MainActivity) getActivity()).noteServiceConnection
+                            .getService()
+                            .addCategory(
+                                    new CategoryKey(
+                                            categoryName,
+                                            new UserKey(((MainActivity) getActivity()).username)
+                                    )
+                            );
+                }
             }
         };
         super.onAttach(activity);

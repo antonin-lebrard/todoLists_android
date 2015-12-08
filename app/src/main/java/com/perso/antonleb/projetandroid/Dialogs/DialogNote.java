@@ -91,7 +91,8 @@ public class DialogNote extends android.support.v4.app.DialogFragment {
         listener = new NoteValidationListener() {
             @Override
             public void onNoteValidation(String noteName) {
-                ((MainActivity)getActivity()).mSectionsPagerAdapter.pushNoteToCurrent(noteName);
+                if (!noteName.equals(""))
+                    ((MainActivity)getActivity()).mSectionsPagerAdapter.pushNoteToCurrent(noteName);
             }
         };
         super.onAttach(activity);
