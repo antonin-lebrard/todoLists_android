@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_list_lang">
+        <item>@string/pref_lang_default</item>
+        <item>@string/pref_lang_eng</item>
+        <item>@string/pref_lang_fra</item>
+    </string-array>
+
+    <string-array name="pref_lang_values">
+        <item>default</item>
+        <item>eng</item>
+        <item>fra</item>
+    </string-array>
+</resources>

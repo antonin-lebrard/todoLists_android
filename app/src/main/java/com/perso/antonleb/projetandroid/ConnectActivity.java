@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -25,7 +27,7 @@ public class ConnectActivity extends AppCompatActivity implements NetworkStateLi
 
     public static String ARG_CONNECT_USERNAME = "username";
 
-    private static String SHARED_PREFERENCES = "com.perso.antonleb.projetandroid.ConnectActivity";
+    public static String SHARED_PREFERENCES = "com.perso.antonleb.projetandroid.ConnectActivity";
     private static String ARG_SHARED_CONNECT_USERNAME = "username_login";
 
     private NetworkStateReceiver networkStateReceiver;

@@ -5,4 +5,8 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorPrimaryAddNote">#FF0000</color>
 
+    <drawable name="black_dimmer_start">#00000000</drawable>
+    <drawable name="black_dimmer_end">#EE000000</drawable>
+
+    <color name="highlight_color_filter">#bbbbbb</color>
 </resources>

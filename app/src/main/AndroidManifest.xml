@@ -39,8 +39,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".HelpActivity"
-                  android:label="@string/layout_label"
-                  android:theme="@style/AppTheme.NoActionBar">
+                  android:label="@string/layout_label">
+        </activity>
+        <activity android:name=".SettingsActivity"
+                  android:label="@string/layout_label">
         </activity>
 
     </application>

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             xmlns:app="http://schemas.android.com/apk/res-auto">
+             android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="fill_parent"
@@ -24,4 +23,43 @@
         android:alpha="0.0"
         android:visibility="invisible"/>
 
+    <View
+        android:id="@+id/dimmer"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/dimmer"/>
+
+    <ImageView
+        android:id="@+id/blank_google"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="9dp"
+        android:background="@drawable/google2"
+        android:visibility="invisible"
+        android:alpha="0.0"/>
+
+    <ImageView
+        android:id="@+id/blank_delete"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:scaleX="0.7"
+        android:layout_gravity="end"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/ic_delete_white"
+        android:visibility="invisible"
+        android:alpha="0.0"/>
+
+    <TextView
+        android:id="@+id/tooltip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_gravity="center_horizontal"
+        android:textSize="25sp"
+        android:text="Bug"
+        android:visibility="invisible"
+        android:alpha="0.0"
+        android:textColor="@android:color/white"/>
 </FrameLayout>

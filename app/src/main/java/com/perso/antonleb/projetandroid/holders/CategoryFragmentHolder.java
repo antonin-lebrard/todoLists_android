@@ -19,7 +19,7 @@ import com.perso.antonleb.projetandroid.listeners.OnDeleteNoteListener;
  */
 public abstract class CategoryFragmentHolder extends Fragment implements CategoryHolder {
 
-    private RecyclerView mRecyclerView;
+    protected RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 

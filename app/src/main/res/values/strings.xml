@@ -18,6 +18,17 @@
     <string name="online_mode">Online mode</string>
     <string name="connect">Connect</string>
     <string name="content_description_add_note">Add a Note</string>
+    <string name="tooltip_google">Google Search this note</string>
+    <string name="tooltip_delete">Delete this note</string>
+
+    <string name="pref_cat_lang_summary">The Language Preference</string>
+    <string name="pref_cat_lang_title">Language</string>
+    <string name="pref_list_lang_summary">Choose your Language Preference</string>
+    <string name="pref_list_lang_title">Language</string>
+
+    <string name="pref_lang_default">Default</string>
+    <string name="pref_lang_eng">English</string>
+    <string name="pref_lang_fra">French</string>
 
     <string name="help_first_title">What is this application, what is its main goal ?</string>
     <string name="help_first_paragraph">

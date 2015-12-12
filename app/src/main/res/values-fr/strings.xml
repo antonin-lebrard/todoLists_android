@@ -19,6 +19,17 @@
     <string name="content_description_add_note">Ajouter une Note</string>
     <string name="offline_mode">Mode offline</string>
     <string name="online_mode">Mode online</string>
+    <string name="tooltip_google">Google cette note</string>
+    <string name="tooltip_delete">Supprime cette note</string>
+
+    <string name="pref_cat_lang_summary">Préférence de Langage</string>
+    <string name="pref_cat_lang_title">Langue</string>
+    <string name="pref_list_lang_summary">Choisissez votre langue</string>
+    <string name="pref_list_lang_title">Langue</string>
+
+    <string name="pref_lang_default">Défaut</string>
+    <string name="pref_lang_eng">Anglais</string>
+    <string name="pref_lang_fra">Français</string>
 
     <string name="help_first_title">Quelle est cette application, et quelle est son but ?</string>
     <string name="help_first_paragraph">

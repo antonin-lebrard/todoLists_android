@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.DecelerateInterpolator;
@@ -47,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
 
     public String username;
 
-    private boolean isUserLoaded = false;
-    private Toast globalToast;
+    public boolean isUserLoaded = false;
+    public Toast globalToast;
 
     public NoteDBServiceConnection noteServiceConnection;
 
@@ -79,18 +80,7 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isUserLoaded) {
-                    String categoryName = mSectionsPagerAdapter.getCurrentCategoryName();
-                    if (categoryName == null){
-                        showToast(R.string.error_no_categories);
-                    } else {
-                        if (globalToast != null) globalToast.cancel();
-                        DialogFragment dialog = DialogNote.newInstance(categoryName);
-                        dialog.show(getSupportFragmentManager(), "NoteDialog");
-                    }
-                } else {
-                    showToast(R.string.error_user_not_logon);
-                }
+                showNoteDialog();
             }
         });
 
@@ -163,19 +153,15 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
     {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            if (globalToast != null) globalToast.cancel();
+            Intent toSettings = new Intent(MainActivity.this, SettingsActivity.class);
+            MainActivity.this.startActivity(toSettings);
         } else if (id == R.id.action_help) {
             if (globalToast != null) globalToast.cancel();
             Intent toHelp = new Intent(MainActivity.this, HelpActivity.class);
             MainActivity.this.startActivity(toHelp);
         } else if (id == R.id.action_add_category) {
-            if (isUserLoaded){
-                if (globalToast != null) globalToast.cancel();
-                DialogFragment dialog = new DialogCategory();
-                dialog.show(getSupportFragmentManager(), "CategoryDialog");
-            } else {
-                showToast(R.string.error_user_not_reachable);
-            }
+            showCategoryDialog();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -184,6 +170,31 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
         if (globalToast != null) globalToast.cancel();
         globalToast = Toast.makeText(getApplicationContext(), resourceId, Toast.LENGTH_SHORT);
         globalToast.show();
+    }
+
+    public void showCategoryDialog(){
+        if (isUserLoaded) {
+            if (globalToast != null) globalToast.cancel();
+            DialogFragment dialog = new DialogCategory();
+            dialog.show(getSupportFragmentManager(), "CategoryDialog");
+        } else {
+            showToast(R.string.error_user_not_reachable);
+        }
+    }
+
+    public void showNoteDialog(){
+        if (isUserLoaded) {
+            String categoryName = mSectionsPagerAdapter.getCurrentCategoryName();
+            if (categoryName == null){
+                showToast(R.string.error_no_categories);
+            } else {
+                if (globalToast != null) globalToast.cancel();
+                DialogFragment dialog = DialogNote.newInstance(categoryName);
+                dialog.show(getSupportFragmentManager(), "NoteDialog");
+            }
+        } else {
+            showToast(R.string.error_user_not_logon);
+        }
     }
 
     @Override
@@ -200,6 +211,14 @@ public class MainActivity extends AppCompatActivity implements UserLoadingListen
         public SectionsPagerAdapter(FragmentManager fm, ViewPager viewPager, View placeholder, String username) {
             super(fm, viewPager, username);
             this.placeholder = placeholder;
+            this.placeholder.setOnTouchListener(
+                    new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            showCategoryDialog();
+                            return false;
+                        }
+                    });
             this.placeholder.setVisibility(View.VISIBLE);
             this.animator = this.placeholder.animate().alpha(1.0f).setDuration(500).setStartDelay(500).setInterpolator(new DecelerateInterpolator());
             this.animator.start();
