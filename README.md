@@ -1,6 +1,6 @@
 # todoLists_android
 
-A minimalist todo list aggregator build complementary to https://github.com/fandegw/todoLists_polymer
+A minimalist todo list aggregator build complementary to <a>https://github.com/fandegw/todoLists_polymer</a>
 
 <h3>Features</h3>
 
@@ -14,3 +14,6 @@ A minimalist todo list aggregator build complementary to https://github.com/fand
 - Synchronise the changes made offline, when entering online mode.
 - Categories never deleted, only made invisible when empty at the next connection.
 
+
+
+<h3> Made by <a>https://github.com/cedric-demongivert</a> and <a>https://github.com/fandegw</a>
