@@ -1,6 +1,6 @@
 # todoLists_android
 
-A minimalist todo list aggregator build complementary to <a>https://github.com/fandegw/todoLists_polymer</a>
+A minimalist todo list aggregator build complementary to <a>https://github.com/antonin-lebrard/todoLists_polymer</a>
 
 <h3>Features</h3>
 
@@ -16,4 +16,4 @@ A minimalist todo list aggregator build complementary to <a>https://github.com/f
 
 
 
-<h3> Made by <a>https://github.com/cedric-demongivert</a> and <a>https://github.com/fandegw</a>
+<h3> Made by <a>https://github.com/cedric-demongivert</a> and <a>https://github.com/antonin-lebrard</a>
