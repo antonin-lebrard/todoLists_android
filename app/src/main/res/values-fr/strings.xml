@@ -66,5 +66,5 @@ Et nous ne voulons pas représenter une nouvelle source de failles de sécurité
 Si vous considerez vos notes comme des informations personnelles, nous vous recommandons de ne pas utiliser cette application.
     </string>
     <string name="help_sources">Toutes les sources de cette application sont disponibles ici :</string>
-    <string name="help_sources_link">https://github.com/fandegw/todoLists_android</string>
+    <string name="help_sources_link">https://github.com/antonin-lebrard/todoLists_android</string>
 </resources>
